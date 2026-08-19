@@ -1,0 +1,293 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────
+   Outskyz Design Tokens
+   Premium adventure travel · Luxury editorial
+   ───────────────────────────────────────────── */
+
+:root {
+  /* Brand palette */
+  --color-void: #020a14;
+  --color-coal: #061526;
+  --color-gold: #d4af37;
+  --color-bright-gold: #f5c542;
+  --color-ivory: #f5f5f5;
+  --color-muted: #a1a1aa;
+  --color-gold-border: rgba(212, 175, 55, 0.35);
+
+  /* Semantic */
+  --background: var(--color-void);
+  --foreground: var(--color-ivory);
+}
+
+@theme inline {
+  /* Fonts — injected via next/font variables in layout.tsx */
+  --font-display: var(--font-playfair-display), ui-serif, Georgia, serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-accent: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+
+  /* Brand colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-void: var(--color-void);
+  --color-coal: var(--color-coal);
+  --color-gold: var(--color-gold);
+  --color-gold-bright: var(--color-bright-gold);
+  --color-ivory: var(--color-ivory);
+  --color-muted: var(--color-muted);
+  --color-gold-border: var(--color-gold-border);
+}
+
+/* ─────────────────────────────────────────────
+   Base
+   ───────────────────────────────────────────── */
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--background);
+  background-image:
+    radial-gradient(circle at 85% 15%, rgba(56, 151, 226, 0.18), transparent 28rem),
+    radial-gradient(circle at 12% 42%, rgba(105, 188, 239, 0.1), transparent 32rem),
+    linear-gradient(145deg, #020914 0%, #06182c 52%, #020a14 100%);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Low-contrast atmosphere used between the editorial content blocks. */
+.sky-section-atmosphere {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.8;
+  background:
+    radial-gradient(ellipse 45% 60% at 8% 15%, rgba(112, 192, 241, 0.1), transparent 70%),
+    radial-gradient(ellipse 40% 55% at 94% 82%, rgba(66, 145, 214, 0.1), transparent 70%);
+}
+
+.sky-hero-glow {
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 72% 23%, rgba(188, 226, 255, 0.2), transparent 22%),
+    linear-gradient(112deg, transparent 38%, rgba(119, 195, 240, 0.08) 58%, transparent 76%);
+  animation: sky-shimmer 9s ease-in-out infinite alternate;
+}
+
+.sky-gif-drift {
+  animation: sky-drift 24s ease-in-out infinite alternate;
+}
+
+.sky-gif-sweep {
+  animation: sky-sweep 18s ease-in-out infinite alternate;
+}
+
+.sky-gif-rise {
+  animation: sky-rise 22s ease-in-out infinite alternate;
+}
+
+.page-transition {
+  transform-origin: center top;
+}
+
+a,
+button,
+select,
+input,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a {
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes sky-drift {
+  from { transform: translate3d(-1.5%, -1%, 0) scale(1); }
+  to { transform: translate3d(1.5%, 1%, 0) scale(1.04); }
+}
+
+@keyframes sky-shimmer {
+  from { opacity: 0.45; transform: translateX(-2%); }
+  to { opacity: 0.95; transform: translateX(2%); }
+}
+
+@keyframes sky-sweep {
+  from { transform: translate3d(-4%, 1%, 0) scale(1.03); }
+  to { transform: translate3d(4%, -1%, 0) scale(1.1); }
+}
+
+@keyframes sky-rise {
+  from { transform: translate3d(0, 4%, 0) scale(1.08); }
+  to { transform: translate3d(0, -4%, 0) scale(1.02); }
+}
+
+@keyframes gold-sheen {
+  0% { transform: translateX(-130%) skewX(-18deg); }
+  55%, 100% { transform: translateX(170%) skewX(-18deg); }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+::selection {
+  background-color: var(--color-gold);
+  color: var(--color-void);
+}
+
+/* ─────────────────────────────────────────────
+   Focus & accessibility
+   ───────────────────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+}
+
+/* ─────────────────────────────────────────────
+   Utilities
+   ───────────────────────────────────────────── */
+
+@utility text-balance {
+  text-wrap: balance;
+}
+
+/* Custom scrollbar — subtle, premium */
+@media (min-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-void);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #262626;
+    border-radius: 9999px;
+    border: 2px solid var(--color-void);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-gold);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  video {
+    display: none;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Scroll Animations
+   ───────────────────────────────────────────── */
+
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.animate-on-scroll.animate-delay-100 {
+  transition-delay: 100ms;
+}
+
+.animate-on-scroll.animate-delay-200 {
+  transition-delay: 200ms;
+}
+
+.animate-on-scroll.animate-delay-300 {
+  transition-delay: 300ms;
+}
+
+.animate-on-scroll.animate-delay-400 {
+  transition-delay: 400ms;
+}
+
+.animate-on-scroll.animate-fade-in {
+  transform: translateY(0);
+}
+
+.animate-on-scroll.animate-scale-in {
+  transform: scale(0.95);
+}
+
+.animate-on-scroll.animate-scale-in.is-visible {
+  transform: scale(1);
+}
+
+.animate-on-scroll.animate-slide-left {
+  transform: translateX(-30px);
+}
+
+.animate-on-scroll.animate-slide-left.is-visible {
+  transform: translateX(0);
+}
+
+.animate-on-scroll.animate-slide-right {
+  transform: translateX(30px);
+}
+
+.animate-on-scroll.animate-slide-right.is-visible {
+  transform: translateX(0);
+}
+
+/* A restrained shimmer for primary actions and image-led cards. */
+.group:hover .group-sheen::after,
+.button-sheen:hover::after {
+  animation: gold-sheen 850ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.group-sheen,
+.button-sheen {
+  isolation: isolate;
+}
+
+.group-sheen::after,
+.button-sheen::after {
+  content: "";
+  position: absolute;
+  inset: -20% auto -20% -35%;
+  z-index: -1;
+  width: 24%;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+}
