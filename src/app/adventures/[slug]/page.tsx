@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/Badge";
 import { GoldLine } from "@/components/ui/GoldLine";
 import { resources } from "@/config/resources";
 import { AdventureExperience } from "@/components/sections/AdventureExperience";
+import { AddToCartButton } from "@/components/cards/AddToCartButton";
 import { getAdventureBySlug, getRelatedAdventures } from "@/data/adventures";
 
 interface Props {
@@ -67,12 +68,22 @@ export default async function AdventurePage({ params }: Props) {
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-ivory/70">
             {adventure.description}
           </p>
-          <Link
-            href="/contact"
-            className="mt-8 inline-flex items-center justify-center rounded-sm bg-gold px-8 py-3.5 text-sm font-semibold uppercase tracking-widest text-black transition-all duration-300 hover:bg-gold-bright hover:shadow-[0_0_30px_rgba(212,175,55,0.35)]"
-          >
-            Book Now
-          </Link>
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <AddToCartButton
+              itemType="adventure"
+              itemId={adventure.slug}
+              itemSlug={adventure.slug}
+              itemName={adventure.title}
+              itemImage={adventure.image}
+              unitPrice={299}
+            />
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center rounded-sm border border-gold/40 px-8 py-3.5 text-sm font-semibold uppercase tracking-widest text-ivory transition-all duration-300 hover:bg-gold/10 hover:text-gold"
+            >
+              Contact Us
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -230,14 +241,24 @@ export default async function AdventurePage({ params }: Props) {
       <h2 className="font-display text-3xl text-ivory sm:text-4xl">
             Ready for your adventure?
           </h2>
-          <Link
-            href="/contact"
-            className="mt-8 inline-flex items-center justify-center rounded-sm bg-gold px-8 py-3.5 text-sm font-semibold uppercase tracking-widest text-black transition-all duration-300 hover:bg-gold-bright hover:shadow-[0_0_30px_rgba(212,175,55,0.35)]"
-          >
-            Contact Us
-          </Link>
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <AddToCartButton
+              itemType="adventure"
+              itemId={adventure.slug}
+              itemSlug={adventure.slug}
+              itemName={adventure.title}
+              itemImage={adventure.image}
+              unitPrice={299}
+            />
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center rounded-sm border border-gold/40 px-8 py-3.5 text-sm font-semibold uppercase tracking-widest text-ivory transition-all duration-300 hover:bg-gold/10 hover:text-gold"
+            >
+              Contact Us
+            </Link>
+          </div>
         </div>
-      </Section>
+        </Section>
     </>
   );
 }

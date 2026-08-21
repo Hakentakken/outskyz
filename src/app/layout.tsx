@@ -5,6 +5,8 @@ import { resources } from "@/config/resources";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/layout/PageTransition";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { CartProvider } from "@/contexts/CartContext";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -67,9 +69,13 @@ export default function RootLayout({
       className={`${fontDisplay.variable} ${fontBody.variable} ${fontAccent.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
-        <Header />
-        <PageTransition>{children}</PageTransition>
-        <Footer />
+        <AuthProvider>
+          <CartProvider>
+            <Header />
+            <PageTransition>{children}</PageTransition>
+            <Footer />
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

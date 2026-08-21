@@ -66,10 +66,10 @@ export const siteConfig = {
     ] satisfies NavItem[],
   },
   contact: {
-    email: "hello@outskyz.com",
+    email: "outskyzz@gmail.com",
     phone: "+91 00000 00000",
-    address: "Mumbai, India",
-    bookingsEmail: "bookings@outskyz.com",
+    address: "Gurugram, India",
+    bookingsEmail: "outskyzz@gmail.com",
   },
   socials: {
     instagram: "https://instagram.com",

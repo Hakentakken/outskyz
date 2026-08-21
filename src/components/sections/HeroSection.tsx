@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { hero } from "@/data/homepage";
-import { resources } from "@/config/resources";
+import { DocumentaryReel } from "@/components/sections/DocumentaryReel";
 import { fadeUp, fadeIn, staggerContainer } from "@/lib/animations";
 
 /**
@@ -21,16 +21,7 @@ export function HeroSection() {
         animate={{ scale: 1 }}
         transition={{ duration: 8, ease: "easeOut" }}
       >
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          poster={resources.sky.heroPoster}
-          className="h-full w-full object-cover"
-        >
-          <source src={resources.sky.heroVideo} type="video/mp4" />
-        </video>
+        <DocumentaryReel />
       </motion.div>
 
       {/* Dark overlay for readability */}

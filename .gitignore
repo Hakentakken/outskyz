@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# large media assets (hosted on Google Drive, not committed to git)
+/public/resources/documentry/
+
+# local dev server log
+devserver.log

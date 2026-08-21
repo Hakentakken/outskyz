@@ -9,6 +9,7 @@ import { Container } from "@/components/ui/Container";
 import { GoldLine } from "@/components/ui/GoldLine";
 import { Badge } from "@/components/ui/Badge";
 import { PackageItinerary } from "@/components/sections/PackageItinerary";
+import { AddToCartButton } from "@/components/cards/AddToCartButton";
 import { getPackageBySlug } from "@/data/packages";
 
 interface Props {
@@ -42,6 +43,9 @@ export default async function PackagePage({ params }: Props) {
   if (!pkg) {
     notFound();
   }
+
+  const packagePrice = Number(pkg.price.replace(/[^0-9.]/g, ""));
+  const packageCurrency = pkg.slug === "russia-sky-adventure" ? "INR" : "USD";
 
   return (
     <>
@@ -143,12 +147,17 @@ export default async function PackagePage({ params }: Props) {
                     {pkg.destination}
                   </div>
                 </div>
-                <Link
-                  href="/contact"
-                  className="mt-8 inline-flex w-full items-center justify-center rounded-sm bg-gold px-8 py-3.5 text-sm font-semibold uppercase tracking-widest text-black transition-all duration-300 hover:bg-gold-bright hover:shadow-[0_0_25px_rgba(212,175,55,0.35)]"
-                >
-                  Book Now
-                </Link>
+                <div className="mt-8">
+                  <AddToCartButton
+                    itemType="package"
+                    itemId={pkg.slug}
+                    itemSlug={pkg.slug}
+                    itemName={pkg.name}
+                    itemImage={pkg.image}
+                    unitPrice={packagePrice}
+                    currency={packageCurrency}
+                  />
+                </div>
               </div>
             </div>
           </div>

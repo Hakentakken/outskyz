@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MessageCircle, MapPin } from "lucide-react";
 import { PageHero } from "@/components/sections/PageHero";
@@ -11,8 +12,50 @@ import { Container } from "@/components/ui/Container";
 import { siteConfig } from "@/config/site";
 import { fadeUp, staggerContainer, fadeUpViewport } from "@/lib/animations";
 
-
 export default function ContactPage() {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    interest: "",
+    message: "",
+  });
+
+  const update =
+    (field: keyof typeof form) =>
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      >,
+    ) => {
+      setForm((prev) => ({ ...prev, [field]: e.target.value }));
+    };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const subject = encodeURIComponent(
+      `New enquiry from ${form.name || "Outskyz website"}`,
+    );
+    const body = encodeURIComponent(
+      [
+        `Name: ${form.name}`,
+        `Email: ${form.email}`,
+        `Phone: ${form.phone || "—"}`,
+        `Adventure interest: ${form.interest || "—"}`,
+        "",
+        "Message:",
+        form.message,
+        "",
+        "— Sent from the Outskyz contact form (outskyz.com)",
+      ].join("\n"),
+    );
+
+    // Opens the visitor's mail client with the enquiry pre-addressed
+    // directly to the Outskyz inbox (outskyzz@gmail.com).
+    window.location.href = `mailto:${siteConfig.contact.email}?subject=${subject}&body=${body}`;
+  };
+
   return (
     <>
       <PageHero
@@ -104,17 +147,13 @@ export default function ContactPage() {
           <div>
             <h2 className="font-display text-2xl text-ivory">Send Us a Message</h2>
             <p className="mt-4 text-muted">
-              Fill out the form and our team will get back to you within 24 hours.
+              Fill out the form and hit &quot;Send Message&quot; — it will open your mail
+              client with the message pre-addressed to {siteConfig.contact.email}.
+              Our team will get back to you within 24 hours.
             </p>
           </div>
 
-          <form
-            className="space-y-6"
-            onSubmit={(e) => {
-              e.preventDefault();
-              alert("Message sent! We will contact you soon.");
-            }}
-          >
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
                 <label className="mb-2 block text-xs uppercase tracking-widest text-gold">
@@ -123,6 +162,8 @@ export default function ContactPage() {
                 <input
                   type="text"
                   required
+                  value={form.name}
+                  onChange={update("name")}
                   className="w-full rounded-sm border border-gold/30 bg-void/50 px-4 py-3 text-sm text-ivory outline-none transition-colors focus:border-gold"
                   placeholder="Your name"
                 />
@@ -134,6 +175,8 @@ export default function ContactPage() {
                 <input
                   type="email"
                   required
+                  value={form.email}
+                  onChange={update("email")}
                   className="w-full rounded-sm border border-gold/30 bg-void/50 px-4 py-3 text-sm text-ivory outline-none transition-colors focus:border-gold"
                   placeholder="you@example.com"
                 />
@@ -147,15 +190,21 @@ export default function ContactPage() {
                 </label>
                 <input
                   type="tel"
+                  value={form.phone}
+                  onChange={update("phone")}
                   className="w-full rounded-sm border border-gold/30 bg-void/50 px-4 py-3 text-sm text-ivory outline-none transition-colors focus:border-gold"
-                  placeholder="+1 234 567 890"
+                  placeholder="+91 98765 43210"
                 />
               </div>
               <div>
                 <label className="mb-2 block text-xs uppercase tracking-widest text-gold">
                   Adventure Interest
                 </label>
-                <select className="w-full rounded-sm border border-gold/30 bg-void/50 px-4 py-3 text-sm text-ivory outline-none transition-colors focus:border-gold">
+                <select
+                  value={form.interest}
+                  onChange={update("interest")}
+                  className="w-full rounded-sm border border-gold/30 bg-void/50 px-4 py-3 text-sm text-ivory outline-none transition-colors focus:border-gold"
+                >
                   <option value="">Select an adventure</option>
                   <option value="skydiving">Skydiving</option>
                   <option value="jet-skiing">Jet Skiing</option>
@@ -173,6 +222,8 @@ export default function ContactPage() {
               <textarea
                 required
                 rows={6}
+                value={form.message}
+                onChange={update("message")}
                 className="w-full rounded-sm border border-gold/30 bg-void/50 px-4 py-3 text-sm text-ivory outline-none transition-colors focus:border-gold"
                 placeholder="Tell us about your dream adventure..."
               />
@@ -180,7 +231,7 @@ export default function ContactPage() {
 
             <button
               type="submit"
-              className="inline-flex w-full items-center justify-center rounded-sm bg-gold px-8 py-3.5 text-sm font-semibold uppercase tracking-widest text-black transition-all duration-300 hover:bg-gold-bright hover:shadow-[0_0_25px_rgba(212,175,55,0.35)] sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-sm bg-gold px-8 py-3.5 text-sm font-semibold uppercase tracking-widest text-black transition-all duration-300 hover:bg-gold-bright hover:shadow-[0_0_25px_rgba(212,175,55,0.35)] sm:w-auto"
             >
               Send Message
             </button>

@@ -1,3 +1,5 @@
+import { getDocumentaryUrl, DOCUMENTARY_FILE_IDS } from "@/config/gdrive";
+
 /**
  * Central registry for all static resource paths.
  * Import paths from here instead of hardcoding them in components.
@@ -14,9 +16,10 @@ export const resources = {
     sunsetFlight: "/resources/bg/4c8d699256b967eea2726a52eabc7ac3.jpg",
     goldenFreefall: "/resources/bg/daeef34471e0dcfe9ac295b7b5a8f5be.jpg",
     mountainFreefall: "/resources/bg/9f7b8472926d4b68912d551bc382710a.jpg",
-    formationFlight: "/resources/bg/8db19c1469eda24bcb240680b473ae7e.jpg",
+    formationFlight: "/resources/bg/8db19c1469eda24b499dd366cc3c4de7c.jpg",
     horizonFlight: "/resources/bg/de896c03e524678037e5c99974e46d51.jpg",
   },
+  documentary: DOCUMENTARY_FILE_IDS.map(getDocumentaryUrl),
 } as const;
 
 export type ResourceKey = keyof typeof resources;

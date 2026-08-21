@@ -3,46 +3,35 @@
 import { useEffect, useCallback } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { X } from "lucide-react";
+import { X, ShoppingCart, User, LogOut } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/utils/cn";
+import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/contexts/CartContext";
 
 interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-/**
- * Full-screen mobile navigation overlay.
- * - Dark background with gold accents
- * - Smooth Framer Motion animation
- * - Body scroll lock while open
- * - Escape key closes the menu
- * - ARIA-compliant dialog
- */
 export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
-  // Lock body scroll while menu is open.
+  const { user, isAdmin, signOut } = useAuth();
+  const { totalItems } = useCart();
+
   useEffect(() => {
     if (!isOpen) return;
-
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-
     return () => {
       document.body.style.overflow = previousOverflow;
     };
   }, [isOpen]);
 
-  // Close on Escape key.
   useEffect(() => {
     if (!isOpen) return;
-
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
+      if (event.key === "Escape") onClose();
     };
-
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
@@ -92,7 +81,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                     href={item.href}
                     onClick={handleLinkClick}
                     className={cn(
-                      "group font-display text-2xl text-ivory transition-colors duration-300",
+                      "group flex items-center gap-3 font-display text-2xl text-ivory transition-colors duration-300",
                       "after:mt-2 after:block after:h-px after:w-0 after:bg-gold after:transition-all after:duration-300",
                       "hover:text-gold hover:after:w-12",
                     )}
@@ -104,14 +93,58 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             </ul>
           </nav>
 
-          <div className="px-8 pb-8">
-            <Link
-              href={siteConfig.cta.href}
-              onClick={handleLinkClick}
-              className="flex w-full items-center justify-center rounded-sm bg-gold px-8 py-3.5 text-sm font-medium uppercase tracking-widest text-black transition-colors duration-300 hover:bg-gold-bright"
-            >
-              {siteConfig.cta.label}
-            </Link>
+          <div className="border-t border-gold/20 px-8 pb-8">
+            <div className="flex flex-col gap-3">
+              <Link
+                href="/cart"
+                onClick={handleLinkClick}
+                className="flex items-center justify-between rounded-sm border border-gold/30 bg-void/50 px-4 py-3 text-lg text-ivory transition-colors hover:bg-gold/10 hover:text-gold"
+              >
+                <span className="flex items-center gap-3">
+                  <ShoppingCart className="h-5 w-5" aria-hidden="true" />
+                  Cart
+                </span>
+                {totalItems > 0 && (
+                  <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-gold px-2 text-xs font-bold text-black">
+                    {totalItems}
+                  </span>
+                )}
+              </Link>
+
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 rounded-sm border border-gold/30 bg-void/50 px-4 py-3 text-lg text-ivory transition-colors hover:bg-gold/10 hover:text-gold"
+                >
+                  <User className="h-5 w-5" aria-hidden="true" />
+                  Admin Panel
+                </Link>
+              )}
+
+              {user ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    signOut();
+                    handleLinkClick();
+                  }}
+                  className="flex items-center gap-3 rounded-sm border border-gold/30 bg-void/50 px-4 py-3 text-lg text-ivory transition-colors hover:bg-gold/10 hover:text-gold"
+                >
+                  <LogOut className="h-5 w-5" aria-hidden="true" />
+                  Sign Out
+                </button>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 rounded-sm border border-gold/30 bg-void/50 px-4 py-3 text-lg text-ivory transition-colors hover:bg-gold/10 hover:text-gold"
+                >
+                  <User className="h-5 w-5" aria-hidden="true" />
+                  Sign In / Sign Up
+                </Link>
+              )}
+            </div>
           </div>
         </motion.div>
       )}

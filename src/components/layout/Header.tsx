@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, User } from "lucide-react";
+import { Menu, User, ShoppingCart, LogOut } from "lucide-react";
 import { resources } from "@/config/resources";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/utils/cn";
 import { Navbar } from "./Navbar";
 import { MobileMenu } from "./MobileMenu";
+import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/contexts/CartContext";
 
 /**
  * Global site header.
@@ -20,6 +22,8 @@ import { MobileMenu } from "./MobileMenu";
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user, profile, isAdmin, signOut } = useAuth();
+  const { totalItems } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -70,13 +74,50 @@ export function Header() {
               {siteConfig.cta.label}
             </Link>
 
-            <button
-              type="button"
-              aria-label="Account"
-              className="hidden h-10 w-10 items-center justify-center rounded-sm border border-gold/40 text-gold transition-colors hover:bg-gold/10 md:flex"
+            {/* Cart */}
+            <Link
+              href="/cart"
+              aria-label="View cart"
+              className="relative flex h-10 w-10 items-center justify-center rounded-sm border border-gold/40 text-gold transition-colors hover:bg-gold/10"
             >
-              <User className="h-4 w-4" aria-hidden="true" />
-            </button>
+              <ShoppingCart className="h-4 w-4" aria-hidden="true" />
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-gold px-1 text-xs font-bold text-black">
+                  {totalItems}
+                </span>
+              )}
+            </Link>
+
+            {/* Admin link (only for admins) */}
+            {isAdmin && (
+              <Link
+                href="/admin"
+                aria-label="Admin panel"
+                className="hidden h-10 w-10 items-center justify-center rounded-sm border border-gold/40 text-gold transition-colors hover:bg-gold/10 md:flex"
+              >
+                <User className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            )}
+
+            {/* Auth button */}
+            {user ? (
+              <button
+                type="button"
+                onClick={() => signOut()}
+                aria-label="Sign out"
+                className="hidden h-10 w-10 items-center justify-center rounded-sm border border-gold/40 text-gold transition-colors hover:bg-gold/10 md:flex"
+              >
+                <LogOut className="h-4 w-4" aria-hidden="true" />
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                aria-label="Account"
+                className="hidden h-10 w-10 items-center justify-center rounded-sm border border-gold/40 text-gold transition-colors hover:bg-gold/10 md:flex"
+              >
+                <User className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            )}
 
             {/* Mobile hamburger */}
             <button
