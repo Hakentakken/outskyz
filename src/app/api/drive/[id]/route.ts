@@ -128,6 +128,13 @@ export async function GET(
     responseHeaders.set("Accept-Ranges", "bytes");
     responseHeaders.set("Content-Disposition", "inline");
 
+    // Let the browser cache video byte-ranges for future page loads.
+    // Each documentary clip is immutable, so a long max-age is safe.
+    // `Vary: Range` ensures the browser caches different byte-range
+    // responses separately within its HTTP range-cache.
+    responseHeaders.set("Cache-Control", "public, max-age=31536000, immutable");
+    responseHeaders.set("Vary", "Accept-Encoding, Range");
+
     if (!responseHeaders.has("Content-Type")) {
       responseHeaders.set("Content-Type", "video/mp4");
     }
