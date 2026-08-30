@@ -22,8 +22,12 @@ export interface Adventure {
   experience: { time: string; title: string; description: string }[];
   safety: string[];
   requirements: string[];
-  gallery: { src: string; alt: string }[];
+    gallery: { src: string; alt: string }[];
   relatedSlugs: string[];
+  /** DB-managed fields (optional — present when sourced from Supabase). */
+  price?: number;
+  currency?: string;
+  is_active?: boolean;
 }
 
 export const adventuresHero = {
@@ -404,4 +408,102 @@ export function getRelatedAdventures(slugs: string[]): Adventure[] {
   return slugs
     .map((slug) => getAdventureBySlug(slug))
     .filter((a): a is Adventure => a !== undefined);
+}
+
+/**
+ * Flat representation of a row from the `adventures` table.
+ * Column names are snake_case to match Postgres / Supabase.
+ */
+export interface DbAdventure {
+  id: string;
+  slug: string;
+  number: string | null;
+  title: string;
+  short_description: string | null;
+  description: string | null;
+  category: string | null;
+  category_label: string | null;
+  image: string | null;
+  difficulty: string | null;
+  duration: string | null;
+  age_limit: string | null;
+  location: string | null;
+  overview: string | null;
+  price: number | string | null;
+  currency: string | null;
+  is_active: boolean | null;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+/** Map each category to its representative Lucide icon. */
+const categoryIcons: Record<AdventureCategory, LucideIcon> = {
+  sky: Wind,
+  water: Waves,
+  land: Cloud,
+  luxury: Plane,
+};
+
+export const difficultyOptions = [
+  "Beginner",
+  "Intermediate",
+  "Advanced",
+  "Expert",
+] as const;
+
+export const currencyOptions = [
+  { value: "USD", label: "USD ($)" },
+  { value: "INR", label: "INR (₹)" },
+] as const;
+
+export function iconForCategory(category: AdventureCategory): LucideIcon {
+  return categoryIcons[category] ?? Wind;
+}
+
+/**
+ * Merge a database adventure row with its static seed entry.
+ *
+ * Scalar fields are taken from the DB row — so admin edits to the title,
+ * short description, full description, rate (price), image, etc. take
+ * effect on the live site — while rich array content that has no DB
+ * columns (`experience`, `safety`, `requirements`, `gallery`,
+ * `relatedSlugs` and the `icon`) is preserved from the static seed when
+ * the slug matches. Brand-new, admin-created adventures get a
+ * category-derived icon and empty arrays.
+ */
+export function mergeDbAdventure(db: DbAdventure, seed?: Adventure): Adventure {
+  const seedAdventure = seed ?? getAdventureBySlug(db.slug);
+  const category = (db.category as AdventureCategory) ?? seedAdventure?.category ?? "sky";
+  const numericPrice =
+    typeof db.price === "string"
+      ? Number.parseFloat(db.price)
+      : db.price ?? 0;
+
+  return {
+    slug: db.slug,
+    number: db.number ?? seedAdventure?.number ?? "",
+    title: db.title ?? seedAdventure?.title ?? "",
+    shortDescription: db.short_description ?? seedAdventure?.shortDescription ?? "",
+    description: db.description ?? seedAdventure?.description ?? "",
+    category,
+    categoryLabel: db.category_label ?? seedAdventure?.categoryLabel ?? category,
+    image: db.image ?? seedAdventure?.image ?? "",
+    icon: seedAdventure?.icon ?? iconForCategory(category),
+    difficulty:
+      (db.difficulty as Adventure["difficulty"]) ??
+      seedAdventure?.difficulty ??
+      "Beginner",
+    duration: db.duration ?? seedAdventure?.duration ?? "",
+    ageLimit: db.age_limit ?? seedAdventure?.ageLimit ?? "",
+    location: db.location ?? seedAdventure?.location ?? "",
+    overview: db.overview ?? seedAdventure?.overview ?? "",
+    experience: seedAdventure?.experience ?? [],
+    safety: seedAdventure?.safety ?? [],
+    requirements: seedAdventure?.requirements ?? [],
+    gallery: seedAdventure?.gallery ?? [],
+    relatedSlugs: seedAdventure?.relatedSlugs ?? [],
+    price: numericPrice,
+    currency: db.currency ?? seedAdventure?.currency ?? "INR",
+    is_active: db.is_active ?? seedAdventure?.is_active ?? true,
+  };
 }

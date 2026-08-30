@@ -67,7 +67,6 @@ export const siteConfig = {
   },
   contact: {
     email: "outskyzz@gmail.com",
-    phone: "+91 00000 00000",
     address: "Gurugram, India",
     bookingsEmail: "outskyzz@gmail.com",
   },

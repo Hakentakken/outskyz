@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, MessageCircle, MapPin } from "lucide-react";
+import { Mail, MessageCircle, MapPin } from "lucide-react";
 import { PageHero } from "@/components/sections/PageHero";
 import { images } from "@/config/images";
 import { Section } from "@/components/sections/Section";
@@ -84,7 +84,7 @@ export default function ContactPage() {
         />
 
         <motion.div
-          className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+          className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
           variants={staggerContainer}
           {...fadeUpViewport}
         >
@@ -99,20 +99,6 @@ export default function ContactPage() {
               className="mt-2 text-sm text-muted transition-colors hover:text-gold"
             >
               {siteConfig.contact.email}
-            </a>
-          </motion.div>
-
-          <motion.div
-            variants={fadeUp}
-            className="flex flex-col items-center rounded-md border border-gold/20 bg-coal/50 p-8 text-center"
-          >
-            <Phone className="h-8 w-8 text-gold" aria-hidden="true" />
-            <h3 className="mt-4 font-display text-lg text-ivory">Phone</h3>
-            <a
-              href={`tel:${siteConfig.contact.phone}`}
-              className="mt-2 text-sm text-muted transition-colors hover:text-gold"
-            >
-              {siteConfig.contact.phone}
             </a>
           </motion.div>
 

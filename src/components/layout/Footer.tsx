@@ -122,14 +122,6 @@ export function Footer() {
                   {siteConfig.contact.email}
                 </a>
               </li>
-              <li>
-                <a
-                  href={`tel:${siteConfig.contact.phone.replace(/\s/g, "")}`}
-                  className="transition-colors duration-300 hover:text-gold"
-                >
-                  {siteConfig.contact.phone}
-                </a>
-              </li>
               <li className="text-muted">{siteConfig.contact.address}</li>
             </ul>
             <div className="mt-6 flex items-center gap-3">
