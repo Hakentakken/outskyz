@@ -16,7 +16,6 @@ export default function ContactPage() {
   const [form, setForm] = useState({
     name: "",
     email: "",
-    phone: "",
     interest: "",
     message: "",
   });
@@ -41,7 +40,6 @@ export default function ContactPage() {
       [
         `Name: ${form.name}`,
         `Email: ${form.email}`,
-        `Phone: ${form.phone || "—"}`,
         `Adventure interest: ${form.interest || "—"}`,
         "",
         "Message:",
@@ -169,36 +167,22 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <div>
-                <label className="mb-2 block text-xs uppercase tracking-widest text-gold">
-                  Phone
-                </label>
-                <input
-                  type="tel"
-                  value={form.phone}
-                  onChange={update("phone")}
-                  className="w-full rounded-sm border border-gold/30 bg-void/50 px-4 py-3 text-sm text-ivory outline-none transition-colors focus:border-gold"
-                  placeholder="+91 98765 43210"
-                />
-              </div>
-              <div>
-                <label className="mb-2 block text-xs uppercase tracking-widest text-gold">
-                  Adventure Interest
-                </label>
-                <select
-                  value={form.interest}
-                  onChange={update("interest")}
-                  className="w-full rounded-sm border border-gold/30 bg-void/50 px-4 py-3 text-sm text-ivory outline-none transition-colors focus:border-gold"
-                >
-                  <option value="">Select an adventure</option>
-                  <option value="skydiving">Skydiving</option>
-                  <option value="jet-skiing">Jet Skiing</option>
-                  <option value="hot-air-balloon">Hot Air Balloon</option>
-                  <option value="helicopter">Helicopter Ride</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
+            <div>
+              <label className="mb-2 block text-xs uppercase tracking-widest text-gold">
+                Adventure Interest
+              </label>
+              <select
+                value={form.interest}
+                onChange={update("interest")}
+                className="w-full rounded-sm border border-gold/30 bg-void/50 px-4 py-3 text-sm text-ivory outline-none transition-colors focus:border-gold"
+              >
+                <option value="">Select an adventure</option>
+                <option value="skydiving">Skydiving</option>
+                <option value="jet-skiing">Jet Skiing</option>
+                <option value="hot-air-balloon">Hot Air Balloon</option>
+                <option value="helicopter">Helicopter Ride</option>
+                <option value="other">Other</option>
+              </select>
             </div>
 
             <div>

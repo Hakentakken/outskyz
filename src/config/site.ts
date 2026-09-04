@@ -67,7 +67,7 @@ export const siteConfig = {
   },
   contact: {
     email: "outskyzz@gmail.com",
-    address: "Gurugram, India",
+    address: "Gurugram, Haryana, India",
     bookingsEmail: "outskyzz@gmail.com",
   },
   socials: {

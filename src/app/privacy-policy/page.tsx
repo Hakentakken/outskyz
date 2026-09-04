@@ -16,7 +16,7 @@ const sections = [
   {
     title: "1. Information We Collect",
     body: [
-      "When you use the Outskyz website, we may collect information you provide directly — such as your name, email address, phone number, and message content when you contact us or book an adventure.",
+      "When you use the Outskyz website, we may collect information you provide directly — such as your name, email address, and message content when you contact us or book an adventure.",
       "We also collect basic usage data (pages visited, device type, browser) to understand how visitors use the site and to improve the experience.",
     ],
   },

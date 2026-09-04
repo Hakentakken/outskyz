@@ -371,6 +371,22 @@ export default function AdminPage() {
       setMessage(`Error: ${error.message}`);
     }
   };
+
+  const syncOrders = async () => {
+    setSaving(true);
+    const supabase = (await import("@/lib/supabase/client")).getBrowserSupabaseClient();
+    const { data, error } = await supabase
+      .from("orders")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (!error) {
+      setDbOrders(data as DbOrder[]);
+      setMessage("Orders synced successfully!");
+    } else {
+      setMessage(`Error syncing orders: ${error.message}`);
+    }
+    setSaving(false);
+  };
     const tabs: { id: Tab; label: string }[] = [
     { id: "prices", label: "Prices" },
     { id: "adventures", label: "Adventures" },
@@ -792,7 +808,7 @@ export default function AdminPage() {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={image.src}
-                      alt={image.alt}
+                      alt={image.alt ?? ""}
                       className="aspect-square w-full object-cover"
                     />
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-void/80 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
