@@ -1,9 +1,7 @@
 "use client";
 
-import { useId } from "react";
 import { cn } from "@/utils/cn";
 import { Container } from "@/components/ui/Container";
-import { resources } from "@/config/resources";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 type SectionBackground = "default" | "dark" | "image";
@@ -48,20 +46,7 @@ export function Section({
   animateDelay = 0,
 }: SectionProps) {
   const isImage = background === "image";
-  const sectionId = useId();
   const { ref, isVisible } = useScrollAnimation();
-  const mediaOptions = [
-    resources.sky.cloudscape,
-    resources.sky.goldenFreefall,
-    resources.sky.sunsetFlight,
-    resources.sky.mountainFreefall,
-    resources.sky.formationFlight,
-    resources.sky.horizonFlight,
-  ];
-  const mediaIndex = Array.from(sectionId).reduce(
-    (total, character) => total + character.charCodeAt(0),
-    0,
-  ) % mediaOptions.length;
 
   const getAnimationClass = () => {
     if (animate === "none") return "";
@@ -98,12 +83,12 @@ export function Section({
       ) : null}
       {!isImage && spacing !== "small" ? (
         <>
+          {/* Gradient atmosphere only — previously an eagerly-fetched photo
+              sat behind every section, including below the fold. */}
           <div
             aria-hidden="true"
-            className="absolute inset-0 bg-cover bg-center opacity-[0.16]"
-            style={{ backgroundImage: `url(${mediaOptions[mediaIndex]})` }}
+            className="absolute inset-0 bg-gradient-to-br from-[#020a14]/80 via-transparent to-[#061c31]/75"
           />
-          <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-[#020a14]/80 via-transparent to-[#061c31]/75" />
           <div aria-hidden="true" className="sky-section-atmosphere" />
         </>
       ) : null}

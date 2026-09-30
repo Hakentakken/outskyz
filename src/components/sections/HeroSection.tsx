@@ -14,15 +14,11 @@ import { fadeUp, fadeIn, staggerContainer } from "@/lib/animations";
 export function HeroSection() {
   return (
     <section className="relative flex min-h-[90vh] items-center overflow-hidden">
-      {/* User-supplied skydiving footage gives the opening a living sky. */}
-      <motion.div
-        className="absolute inset-0"
-        initial={{ scale: 1.1 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 8, ease: "easeOut" }}
-      >
+      {/* Decorative backdrop: poster paints first; video loads only when
+          the connection and motion preferences justify it. */}
+      <div className="absolute inset-0">
         <DocumentaryReel />
-      </motion.div>
+      </div>
 
       {/* Dark overlay for readability */}
       <div className="absolute inset-0 bg-gradient-to-r from-void via-void/75 to-[#061b35]/25" />

@@ -7,6 +7,7 @@ import { PageHero } from "@/components/sections/PageHero";
 import { Section } from "@/components/sections/Section";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Container } from "@/components/ui/Container";
+import { LazyVideoTile } from "@/components/ui/LazyVideoTile";
 import { galleryImages, galleryHero, galleryCategories } from "@/data/gallery";
 import { fadeUp, staggerContainer, fadeUpViewport } from "@/lib/animations";
 
@@ -75,13 +76,9 @@ export default function GalleryPage() {
                 className="group relative aspect-square overflow-hidden rounded-md border border-gold/20 bg-coal"
               >
                 {image.type === "video" ? (
-                  <video
+                  <LazyVideoTile
                     src={image.src}
-                    muted
-                    loop
-                    playsInline
-                    autoPlay
-                    aria-label={image.alt}
+                    alt={image.alt}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                 ) : (

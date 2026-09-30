@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Section } from "@/components/sections/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { LazyVideoTile } from "@/components/ui/LazyVideoTile";
 import { gallery } from "@/data/homepage";
 import { fadeUp, staggerContainer, fadeUpViewport } from "@/lib/animations";
 
@@ -42,15 +43,7 @@ export function GallerySection({ animate, animateDelay }: { animate?: AnimationT
             }`}
           >
             {image.type === "video" ? (
-              <video
-                src={image.src}
-                muted
-                loop
-                playsInline
-                autoPlay
-                aria-label={image.alt}
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-              />
+              <LazyVideoTile src={image.src} alt={image.alt} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
             ) : (
               <Image
                 src={image.src}

@@ -29,17 +29,16 @@ export function PageHero({ heading, subtitle, image }: PageHeroProps) {
           className="object-cover"
         />
       ) : (
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          aria-hidden="true"
-          poster={resources.sky.heroPoster}
-          className="absolute inset-0 h-full w-full object-cover"
-        >
-          <source src={resources.sky.heroVideo} type="video/mp4" />
-        </video>
+        /* No image supplied: fall back to the poster rather than
+           autoplaying a 17 MB video on every page. */
+        <Image
+          src={resources.sky.heroPoster}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
       )}
 
       {/* Overlays */}

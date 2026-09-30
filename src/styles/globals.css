@@ -205,8 +205,11 @@ h6 {
     scroll-behavior: auto !important;
   }
 
+  /* Do not hide video outright — that left reduced-motion visitors with a
+     blank hero. The components already skip loading video for these users and
+     fall back to the poster image, which is the accessible behaviour. */
   video {
-    display: none;
+    animation: none !important;
   }
 }
 

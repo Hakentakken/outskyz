@@ -1,5 +1,13 @@
+/**
+ * Unsplash source URLs.
+ *
+ * Width is capped at 1600 because the hero is never displayed wider, and
+ * `q=75` instead of `q=85` saves real bytes on a photo this size with no
+ * visible loss. `next/image` then serves a correctly-sized AVIF/WebP
+ * derivative per viewport instead of the full original.
+ */
 const unsplash = (id: string) =>
-  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1800&q=85`;
+  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1600&q=75`;
 
 /** Direct, free-to-use Unsplash image URLs for every non-gallery visual. */
 export const images = {
