@@ -3,7 +3,7 @@
 import { useEffect, useCallback } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { X, ShoppingCart, User, LogOut } from "lucide-react";
+import { X, ShoppingCart, User, LogOut, Package } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/utils/cn";
 import { useAuth } from "@/contexts/AuthContext";
@@ -123,17 +123,27 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               )}
 
               {user ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    signOut();
-                    handleLinkClick();
-                  }}
-                  className="flex items-center gap-3 rounded-sm border border-gold/30 bg-void/50 px-4 py-3 text-lg text-ivory transition-colors hover:bg-gold/10 hover:text-gold"
-                >
-                  <LogOut className="h-5 w-5" aria-hidden="true" />
-                  Sign Out
-                </button>
+                <>
+                  <Link
+                    href="/orders"
+                    onClick={handleLinkClick}
+                    className="flex items-center gap-3 rounded-sm border border-gold/30 bg-void/50 px-4 py-3 text-lg text-ivory transition-colors hover:bg-gold/10 hover:text-gold"
+                  >
+                    <Package className="h-5 w-5" aria-hidden="true" />
+                    My Orders
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void signOut();
+                      handleLinkClick();
+                    }}
+                    className="flex items-center gap-3 rounded-sm border border-gold/30 bg-void/50 px-4 py-3 text-lg text-ivory transition-colors hover:bg-red-500/10 hover:text-red-400"
+                  >
+                    <LogOut className="h-5 w-5" aria-hidden="true" />
+                    Sign Out
+                  </button>
+                </>
               ) : (
                 <Link
                   href="/login"

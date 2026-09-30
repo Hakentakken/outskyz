@@ -11,7 +11,11 @@ import { GoldLine } from "@/components/ui/GoldLine";
 import { resources } from "@/config/resources";
 import { AdventureExperience } from "@/components/sections/AdventureExperience";
 import { AddToCartButton } from "@/components/cards/AddToCartButton";
-import { getAdventureBySlug, getRelatedAdventures } from "@/data/adventures";
+import {
+  adventures,
+  getAdventureBySlug,
+  getRelatedAdventures,
+} from "@/data/adventures";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -32,8 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export async function generateStaticParams() {
-  const { adventures } = await import("@/data/adventures");
+export function generateStaticParams() {
   return adventures.map((a) => ({ slug: a.slug }));
 }
 

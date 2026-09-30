@@ -10,7 +10,7 @@ import { GoldLine } from "@/components/ui/GoldLine";
 import { Badge } from "@/components/ui/Badge";
 import { PackageItinerary } from "@/components/sections/PackageItinerary";
 import { AddToCartButton } from "@/components/cards/AddToCartButton";
-import { getPackageBySlug } from "@/data/packages";
+import { packages, getPackageBySlug } from "@/data/packages";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -31,8 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export async function generateStaticParams() {
-  const { packages } = await import("@/data/packages");
+export function generateStaticParams() {
   return packages.map((p) => ({ slug: p.slug }));
 }
 

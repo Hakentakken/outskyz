@@ -8,7 +8,7 @@ import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Container } from "@/components/ui/Container";
 import { GoldLine } from "@/components/ui/GoldLine";
 import { resources } from "@/config/resources";
-import { getDestinationBySlug } from "@/data/destinations";
+import { destinations, getDestinationBySlug } from "@/data/destinations";
 import { getPackageBySlug } from "@/data/packages";
 
 interface Props {
@@ -30,8 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export async function generateStaticParams() {
-  const { destinations } = await import("@/data/destinations");
+export function generateStaticParams() {
   return destinations.map((d) => ({ slug: d.slug }));
 }
 

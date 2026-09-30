@@ -1,28 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { authenticateRequest } from "@/lib/supabase/api-auth";
+import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
 
-async function authenticatedUser(request: NextRequest) {
-  const token = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (!token || !url || !key) return null;
-  const client = createClient(url, key);
-  const { data } = await client.auth.getUser(token);
-  return data.user;
-}
-
 export async function POST(request: NextRequest) {
-  const user = await authenticatedUser(request);
+  const user = await authenticateRequest(request);
   const keyId = process.env.RAZORPAY_KEY_ID;
   const keySecret = process.env.RAZORPAY_KEY_SECRET;
   if (!user) return NextResponse.json({ error: "Please sign in to checkout." }, { status: 401 });
   if (!keyId || !keySecret) return NextResponse.json({ error: "Razorpay is not configured yet." }, { status: 503 });
 
   try {
-    const supabase = createServerSupabaseClient();
+    const supabase = createAdminSupabaseClient();
     const [{ data: cartItems, error: cartError }, { data: profile }] = await Promise.all([
       supabase.from("cart_items").select("*").eq("user_id", user.id),
       supabase.from("profiles").select("full_name, phone").eq("id", user.id).single(),

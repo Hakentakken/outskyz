@@ -1,7 +1,15 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { getBrowserSupabaseClient } from "@/lib/supabase/client";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
+import { tryGetBrowserSupabaseClient } from "@/lib/supabase/client";
 import { useAuth } from "./AuthContext";
 
 export interface CartItem {
@@ -41,10 +49,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [items, setItems] = useState<CartItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const supabase = getBrowserSupabaseClient();
 
-  const fetchCart = async () => {
-    if (!user) {
+  // Resolved lazily and safely: must never throw during render.
+  const supabase = useMemo(() => tryGetBrowserSupabaseClient(), []);
+
+  const fetchCart = useCallback(async () => {
+    if (!user || !supabase) {
       setItems([]);
       return;
     }
@@ -56,7 +66,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       .order("created_at", { ascending: true });
     if (!error && data) setItems(data as CartItem[]);
     setIsLoading(false);
-  };
+  }, [user, supabase]);
 
   useEffect(() => {
     let cancelled = false;
@@ -72,7 +82,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [fetchCart]);
 
   const addToCart = async (item: {
     itemType: "adventure" | "package";
@@ -83,38 +93,44 @@ export function CartProvider({ children }: { children: ReactNode }) {
     unitPrice: number;
     currency?: string;
   }) => {
-    if (!user) return { error: "Please sign in to add items to your cart." };
+    if (!user || !supabase) {
+      return { error: "Please sign in to add items to your cart." };
+    }
 
-    // The server looks up the active admin-managed price before creating the
-    // cart item; a browser-provided price must never be trusted for checkout.
-    const { data: sessionData } = await supabase.auth.getSession();
-    const response = await fetch("/api/cart/add", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${sessionData.session?.access_token ?? ""}`,
-      },
-      body: JSON.stringify({ itemType: item.itemType, itemSlug: item.itemSlug }),
-    });
-    const result = (await response.json()) as { error?: string };
-    if (response.ok) await fetchCart();
-    return { error: result.error ?? null };
+    try {
+      // The server looks up the active admin-managed price before creating the
+      // cart item; a browser-provided price must never be trusted for checkout.
+      const { data: sessionData } = await supabase.auth.getSession();
+      const response = await fetch("/api/cart/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionData.session?.access_token ?? ""}`,
+        },
+        body: JSON.stringify({ itemType: item.itemType, itemSlug: item.itemSlug }),
+      });
+      const result = (await response.json()) as { error?: string };
+      if (response.ok) await fetchCart();
+      return { error: result.error ?? null };
+    } catch {
+      return { error: "We couldn't reach our servers. Please try again." };
+    }
   };
 
   const removeFromCart = async (itemId: string) => {
-    if (!user) return;
+    if (!user || !supabase) return;
     await supabase.from("cart_items").delete().eq("id", itemId);
     await fetchCart();
   };
 
   const updateQuantity = async (itemId: string, quantity: number) => {
-    if (!user || quantity < 1) return;
+    if (!user || !supabase || quantity < 1) return;
     await supabase.from("cart_items").update({ quantity }).eq("id", itemId);
     await fetchCart();
   };
 
   const clearCart = async () => {
-    if (!user) return;
+    if (!user || !supabase) return;
     await supabase.from("cart_items").delete().eq("user_id", user.id);
     setItems([]);
   };
