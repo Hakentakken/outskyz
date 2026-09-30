@@ -43,7 +43,7 @@ export default function OrdersPage() {
   if (!user) {
     return (
       <>
-        <PageHero heading="YOUR ORDERS" subtitle="Sign in to view your orders." image="/resources/gallery/1.jpg" />
+        <PageHero heading="YOUR ORDERS" subtitle="Sign in to view your orders." image="/resources/bg/9f7b8472926d4b68912d551bc382710a.jpg" />
         <Section background="default" spacing="large">
           <Container>
             <div className="mx-auto max-w-md text-center">
@@ -64,7 +64,7 @@ export default function OrdersPage() {
 
   return (
     <>
-      <PageHero heading="YOUR ORDERS" subtitle="Track your adventure bookings." image="/resources/gallery/1.jpg" />
+      <PageHero heading="YOUR ORDERS" subtitle="Track your adventure bookings." image="/resources/bg/9f7b8472926d4b68912d551bc382710a.jpg" />
       <Section background="default" spacing="large">
         <Container>
           {loading ? (

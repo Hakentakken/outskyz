@@ -436,7 +436,7 @@ export default function AdminPage() {
       <PageHero
         heading="ADMIN PANEL"
         subtitle="Manage prices, content, and orders."
-        image="/resources/gallery/1.jpg"
+        image="/resources/bg/9f7b8472926d4b68912d551bc382710a.jpg"
       />
       <Section background="default" spacing="large">
         <Container>

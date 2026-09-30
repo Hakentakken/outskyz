@@ -49,7 +49,7 @@ export default function SafetyPage() {
       <PageHero
         heading="SAFETY FIRST"
         subtitle="Certified guides, premium equipment, and rigorous protocols on every adventure."
-        image="/resources/gallery/1.jpg"
+        image="/resources/bg/9f7b8472926d4b68912d551bc382710a.jpg"
       />
       <Section background="default" spacing="small">
         <Container>

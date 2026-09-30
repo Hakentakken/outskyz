@@ -1,3 +1,5 @@
+import { images } from "@/config/images";
+
 export const about = {
   hero: {
     heading: "OUR STORY",
@@ -56,6 +58,10 @@ export const about = {
         "We engineer moments that become stories — stories that become legends.",
     },
   ],
+  leadership: {
+    eyebrow: "Our Leadership",
+    title: "The Vision Behind Outskyz",
+  },
   foundersPreview: {
     eyebrow: "Our Founders",
     title: "Built by Passionate Explorers",
@@ -65,4 +71,3 @@ export const about = {
     cta: { label: "Meet Our Team", href: "/team" },
   },
 } as const;
-import { images } from "@/config/images";

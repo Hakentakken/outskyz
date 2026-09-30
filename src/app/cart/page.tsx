@@ -117,7 +117,7 @@ export default function CartPage() {
   if (!user) {
     return (
       <>
-        <PageHero heading="YOUR CART" subtitle="Sign in to view your cart." image="/resources/gallery/1.jpg" />
+        <PageHero heading="YOUR CART" subtitle="Sign in to view your cart." image="/resources/bg/9f7b8472926d4b68912d551bc382710a.jpg" />
         <Section background="default" spacing="large">
           <Container>
             <div className="mx-auto max-w-md text-center">
@@ -139,7 +139,7 @@ export default function CartPage() {
 
   return (
     <>
-      <PageHero heading="YOUR CART" subtitle="Review your selected adventures." image="/resources/gallery/1.jpg" />
+      <PageHero heading="YOUR CART" subtitle="Review your selected adventures." image="/resources/bg/9f7b8472926d4b68912d551bc382710a.jpg" />
       <Section background="default" spacing="large">
         <Container>
           {items.length === 0 ? (

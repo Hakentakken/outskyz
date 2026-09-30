@@ -34,7 +34,7 @@ export default function SignupPage() {
 
   return (
     <>
-      <PageHero heading="JOIN OUTSKYZ" subtitle="Create your account and start your adventure." image="/resources/gallery/1.jpg" />
+      <PageHero heading="JOIN OUTSKYZ" subtitle="Create your account and start your adventure." image="/resources/bg/9f7b8472926d4b68912d551bc382710a.jpg" />
       <Section background="default" spacing="large">
         <Container>
           <div className="mx-auto max-w-md">

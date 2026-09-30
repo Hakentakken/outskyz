@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { PageHero } from "@/components/sections/PageHero";
 import { Section } from "@/components/sections/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { GoldLine } from "@/components/ui/GoldLine";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Container } from "@/components/ui/Container";
+import { Portrait } from "@/components/ui/Portrait";
 import { about } from "@/data/about";
 import { founders } from "@/data/founders";
 import { teamMembers } from "@/data/team";
@@ -114,22 +116,28 @@ export default function AboutPage() {
       {/* Our Leadership */}
       <Section background="dark" spacing="large">
         <SectionHeading
-          eyebrow="Our Leadership"
-          title="Built by Passionate Explorers"
+          eyebrow={about.leadership.eyebrow}
+          title={about.leadership.title}
           align="center"
         />
         <div className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2">
-          {founders.map((founder) => (
+          {founders.map((founder, index) => (
             <div
               key={founder.id}
               className="rounded-md border border-gold/20 bg-coal/50 p-8"
             >
-              <div className="relative aspect-[4/3] overflow-hidden rounded-md bg-gradient-to-br from-coal to-void">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="font-display text-6xl text-gold/10">
-                    {founder.name.charAt(0)}
-                  </span>
-                </div>
+              <div className="relative aspect-[4/5] overflow-hidden rounded-md bg-gradient-to-br from-coal to-void">
+                <Portrait
+                  src={founder.image}
+                  name={founder.name}
+                  role={founder.role}
+                  priority={index === 0}
+                  sizes="(max-width: 640px) 100vw, 50vw"
+                />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-void/70 via-transparent to-transparent"
+                />
               </div>
               <div className="mt-6">
                 <h3 className="font-display text-2xl text-ivory">
@@ -142,6 +150,11 @@ export default function AboutPage() {
                 <p className="mt-4 text-sm leading-relaxed text-muted">
                   {founder.bio}
                 </p>
+                {founder.needsBio ? (
+                  <p className="mt-3 text-xs italic leading-relaxed text-gold/60">
+                    Bio placeholder — awaiting final copy.
+                  </p>
+                ) : null}
               </div>
             </div>
           ))}
@@ -156,18 +169,23 @@ export default function AboutPage() {
           align="center"
         />
         <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {teamMembers.map((member) => (
+          {teamMembers.map((member, index) => (
             <div
               key={member.id}
               className="rounded-md border border-gold/20 bg-coal/50 p-6 transition-all duration-300 hover:border-gold/40"
             >
               <div className="relative aspect-[3/4] overflow-hidden rounded-md bg-gradient-to-br from-coal to-void">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="font-display text-5xl text-gold/10">
-                    {member.name.charAt(0)}
-                  </span>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-void/80 via-transparent to-transparent" />
+                <Portrait
+                  src={member.image}
+                  name={member.name}
+                  role={member.role}
+                  priority={index < 3}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-void/80 via-transparent to-transparent"
+                />
                 <div className="absolute inset-x-0 bottom-0 p-4">
                   <h3 className="font-display text-xl text-ivory">
                     {member.name}
@@ -180,6 +198,11 @@ export default function AboutPage() {
               <p className="mt-4 text-sm leading-relaxed text-muted">
                 {member.bio}
               </p>
+              {member.needsName ? (
+                <p className="mt-3 text-xs italic leading-relaxed text-gold/60">
+                  Name placeholder — awaiting the real name.
+                </p>
+              ) : null}
             </div>
           ))}
         </div>
@@ -207,12 +230,17 @@ export default function AboutPage() {
             </a>
           </div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-md border border-gold/20 bg-coal">
-            <div className="absolute inset-0 bg-gradient-to-br from-coal to-void" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="font-display text-6xl text-gold/10">
-                OUTSKYZ
-              </span>
-            </div>
+            <Image
+              src={about.foundersPreview.image}
+              alt="Outskyz founders"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-gradient-to-br from-void/55 via-transparent to-void/35"
+            />
           </div>
         </div>
       </Section>

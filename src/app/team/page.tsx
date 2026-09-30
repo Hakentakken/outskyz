@@ -4,6 +4,7 @@ import { Section } from "@/components/sections/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Container } from "@/components/ui/Container";
+import { Portrait } from "@/components/ui/Portrait";
 import { teamHero, teamMembers } from "@/data/team";
 
 export const metadata: Metadata = {
@@ -41,17 +42,19 @@ export default function TeamPage() {
           align="center"
         />
         <div className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2">
-          {teamMembers.slice(0, 2).map((member) => (
+          {teamMembers.slice(0, 2).map((member, index) => (
             <div
               key={member.id}
               className="rounded-md border border-gold/20 bg-coal/50 p-8"
             >
-              <div className="relative aspect-[4/3] overflow-hidden rounded-md bg-gradient-to-br from-coal to-void">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="font-display text-6xl text-gold/10">
-                    {member.name.charAt(0)}
-                  </span>
-                </div>
+              <div className="relative aspect-[4/5] overflow-hidden rounded-md bg-gradient-to-br from-coal to-void">
+                <Portrait
+                  src={member.image}
+                  name={member.name}
+                  role={member.role}
+                  priority={index === 0}
+                  sizes="(max-width: 640px) 100vw, 50vw"
+                />
               </div>
               <div className="mt-6">
                 <h3 className="font-display text-2xl text-ivory">
@@ -63,6 +66,11 @@ export default function TeamPage() {
                 <p className="mt-4 text-sm leading-relaxed text-muted">
                   {member.bio}
                 </p>
+                {member.needsName ? (
+                  <p className="mt-3 text-xs italic leading-relaxed text-gold/60">
+                    Name placeholder — awaiting the real name.
+                  </p>
+                ) : null}
               </div>
             </div>
           ))}
@@ -83,12 +91,16 @@ export default function TeamPage() {
               className="rounded-md border border-gold/20 bg-coal/50 p-6 transition-all duration-300 hover:border-gold/40"
             >
               <div className="relative aspect-[3/4] overflow-hidden rounded-md bg-gradient-to-br from-coal to-void">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="font-display text-5xl text-gold/10">
-                    {member.name.charAt(0)}
-                  </span>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-void/80 via-transparent to-transparent" />
+                <Portrait
+                  src={member.image}
+                  name={member.name}
+                  role={member.role}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-void/80 via-transparent to-transparent"
+                />
                 <div className="absolute inset-x-0 bottom-0 p-4">
                   <h3 className="font-display text-xl text-ivory">
                     {member.name}
@@ -101,6 +113,11 @@ export default function TeamPage() {
               <p className="mt-4 text-sm leading-relaxed text-muted">
                 {member.bio}
               </p>
+              {member.needsName ? (
+                <p className="mt-3 text-xs italic leading-relaxed text-gold/60">
+                  Name placeholder — awaiting the real name.
+                </p>
+              ) : null}
             </div>
           ))}
         </div>
@@ -120,12 +137,16 @@ export default function TeamPage() {
               className="rounded-md border border-gold/20 bg-coal/50 p-6 transition-all duration-300 hover:border-gold/40"
             >
               <div className="relative aspect-[3/4] overflow-hidden rounded-md bg-gradient-to-br from-coal to-void">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="font-display text-5xl text-gold/10">
-                    {member.name.charAt(0)}
-                  </span>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-void/80 via-transparent to-transparent" />
+                <Portrait
+                  src={member.image}
+                  name={member.name}
+                  role={member.role}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-void/80 via-transparent to-transparent"
+                />
                 <div className="absolute inset-x-0 bottom-0 p-4">
                   <h3 className="font-display text-xl text-ivory">
                     {member.name}
@@ -138,6 +159,11 @@ export default function TeamPage() {
               <p className="mt-4 text-sm leading-relaxed text-muted">
                 {member.bio}
               </p>
+              {member.needsName ? (
+                <p className="mt-3 text-xs italic leading-relaxed text-gold/60">
+                  Name placeholder — awaiting the real name.
+                </p>
+              ) : null}
             </div>
           ))}
         </div>

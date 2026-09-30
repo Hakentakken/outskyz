@@ -43,5 +43,6 @@ next-env.d.ts
 # large media assets (hosted on Google Drive, not committed to git)
 /public/resources/documentry/
 
-# local dev server log
+# local dev server logs (never commit — they can capture .env values)
 devserver.log
+devserver_err.log

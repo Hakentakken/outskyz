@@ -31,7 +31,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <PageHero heading="WELCOME BACK" subtitle="Sign in to continue your adventure." image="/resources/gallery/1.jpg" />
+      <PageHero heading="WELCOME BACK" subtitle="Sign in to continue your adventure." image="/resources/bg/9f7b8472926d4b68912d551bc382710a.jpg" />
       <Section background="default" spacing="large">
         <Container>
           <div className="mx-auto max-w-md">
