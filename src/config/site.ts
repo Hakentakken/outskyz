@@ -10,7 +10,11 @@ export const siteConfig = {
   locale: "en_IN",
   brand: {
     colors: {
-      background: "#050505",
+      // Must match --color-void in globals.css: this is the value the browser
+      // paints the address bar with, and the body background is void plus a
+      // navy gradient. It previously said #050505, which is not a colour that
+      // appears anywhere in the design system.
+      background: "#020a14",
       secondary: "#0D0D0D",
       gold: "#D4AF37",
       brightGold: "#F5C542",

@@ -24,7 +24,10 @@
   /* Fonts — injected via next/font variables in layout.tsx */
   --font-display: var(--font-playfair-display), ui-serif, Georgia, serif;
   --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-accent: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  /* Montserrat was dropped from next/font (it only ever styled one eyebrow),
+     so the accent utility must resolve to Inter or it silently falls back to a
+     system sans and loses the brand's letter-spacing tuning. */
+  --font-accent: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
   /* Brand colors */
   --color-background: var(--background);

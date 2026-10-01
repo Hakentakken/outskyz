@@ -26,9 +26,9 @@ const backgroundClasses: Record<SectionBackground, string> = {
 };
 
 const spacingClasses: Record<SectionSpacing, string> = {
-  small: "py-5 sm:py-6",
-  medium: "py-10 sm:py-12",
-  large: "py-12 sm:py-16",
+  small: "py-8 sm:py-10",
+  medium: "py-12 sm:py-16",
+  large: "py-20 sm:py-28",
 };
 
 /**

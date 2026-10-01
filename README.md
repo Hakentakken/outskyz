@@ -108,6 +108,15 @@ public/
 - **Dark mode only** — the brand is built around a dark, cinematic aesthetic. No light-mode toggle.
 - **Fonts are self-hosted** via `next/font` — zero external network requests for typography.
 
+## Known TODOs
+
+- **Social links are placeholders.** `siteConfig.socials` in `src/config/site.ts` points at
+  `https://instagram.com` and `https://youtube.com`. Replace both with the real Outskyz profile URLs
+  before launch — the footer renders them as outbound links, so they currently ship as dead ends.
+- **Newsletter signup is not wired up.** The footer form validates the address client-side and shows a
+  success state, but nothing is persisted. Point it at the mailing-list provider (or a Supabase table)
+  when one is chosen.
+
 ## Deployment
 
 This project is designed for seamless deployment on [Vercel](https://vercel.com).

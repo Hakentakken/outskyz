@@ -5,65 +5,86 @@ import { resources } from "@/config/resources";
 import { siteConfig } from "@/config/site";
 import { Container } from "@/components/ui/Container";
 import { Divider } from "@/components/ui/Divider";
+import { NewsletterForm } from "@/components/ui/NewsletterForm";
 import { adventures } from "@/data/adventures";
 import { destinations } from "@/data/destinations";
 
 const FOOTER_DESCRIPTION =
   "Curating unforgettable adventure experiences across the world.";
 
+const columnHeadingClass =
+  "text-xs font-semibold uppercase tracking-[0.3em] text-gold";
+
+const linkClass =
+  "text-sm text-ivory/70 transition-colors duration-300 hover:text-gold";
+
+const socialClass =
+  "flex h-11 w-11 items-center justify-center rounded-sm border border-gold/40 text-gold transition-all duration-300 hover:bg-gold hover:text-black hover:shadow-[0_0_24px_rgba(212,175,55,0.3)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold";
+
 /**
- * Global footer.
- * Column 1 — brand + description
- * Column 2 — Explore links (adventures + destinations)
- * Column 3 — Company links
- * Column 4 — Contact details + social icons
- * Bottom — copyright + legal links
+ * Global footer — three bands.
+ *
+ * 1. Brand statement + newsletter capture (the old layout had no signup at
+ *    all, despite it being tracked as a known TODO).
+ * 2. Four link columns: Experiences, Destinations, Company, Contact.
+ * 3. Legal bar: copyright, policy links.
+ *
+ * Social URLs are placeholders — see "Known TODOs" in the README.
  */
 export function Footer() {
   return (
     <footer className="border-t border-gold/25 bg-coal">
-      <Container className="py-16">
-        <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Brand */}
+      {/* Band 1 — brand + newsletter */}
+      <Container className="pt-16 pb-12">
+        <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-end">
           <div>
             <Link
               href="/"
               aria-label={`${siteConfig.name} — home`}
-              className="group flex items-center gap-3"
+              className="group inline-flex items-center gap-3"
             >
               <Image
                 src={resources.logo}
                 alt={`${siteConfig.name} logo`}
                 width={180}
                 height={60}
-                className="h-16 w-auto brightness-110 transition-all duration-300 group-hover:scale-[1.035] group-hover:brightness-125 group-hover:drop-shadow-[0_0_16px_rgba(70,181,255,0.45)]"
+                className="h-14 w-auto brightness-110 transition-all duration-300 group-hover:scale-[1.035] group-hover:brightness-125 group-hover:drop-shadow-[0_0_16px_rgba(70,181,255,0.45)]"
               />
             </Link>
-            <p className="mt-5 text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+            <p className="mt-5 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
               {siteConfig.tagline}
             </p>
-            <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
+            <p className="mt-3 max-w-md text-sm leading-relaxed text-muted">
               {FOOTER_DESCRIPTION}
             </p>
           </div>
 
+          <div className="lg:border-l lg:border-gold/15 lg:pl-10">
+            <NewsletterForm />
+          </div>
+        </div>
+
+        <Divider className="mt-12" />
+      </Container>
+
+      {/* Band 2 — link columns */}
+      <Container className="pb-14">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* Experiences */}
           <nav aria-label="Footer — Experiences">
-            <h3 className="mb-5 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
-              Experiences
-            </h3>
-            <ul className="space-y-3">
+            <h2 className={columnHeadingClass}>Experiences</h2>
+            <ul className="mt-5 space-y-2.5">
               {adventures.map((adventure) => (
                 <li key={adventure.slug}>
                   <Link
                     href={`/adventures/${adventure.slug}`}
-                    className="text-sm text-ivory/70 transition-colors duration-300 hover:text-gold"
+                    className={linkClass}
                   >
                     {adventure.title}
                   </Link>
                 </li>
               ))}
-              <li>
+              <li className="pt-2">
                 <Link
                   href="/adventures"
                   className="text-sm font-semibold text-gold transition-colors duration-300 hover:text-gold-bright"
@@ -74,33 +95,30 @@ export function Footer() {
             </ul>
           </nav>
 
-          {/* Destinations + Safety */}
+          {/* Destinations */}
           <nav aria-label="Footer — Destinations">
-            <h3 className="mb-5 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
-              Destinations
-            </h3>
-            <ul className="space-y-3">
+            <h2 className={columnHeadingClass}>Destinations</h2>
+            <ul className="mt-5 space-y-2.5">
               {destinations.map((destination) => (
                 <li key={destination.slug}>
                   <Link
                     href={`/destinations/${destination.slug}`}
-                    className="text-sm text-ivory/70 transition-colors duration-300 hover:text-gold"
+                    className={linkClass}
                   >
                     {destination.name}
                   </Link>
                 </li>
               ))}
             </ul>
-            <h3 className="mb-5 mt-8 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
-              Company
-            </h3>
-            <ul className="space-y-3">
+          </nav>
+
+          {/* Company */}
+          <nav aria-label="Footer — Company">
+            <h2 className={columnHeadingClass}>Company</h2>
+            <ul className="mt-5 space-y-2.5">
               {siteConfig.navigation.company.map((item) => (
                 <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="text-sm text-ivory/70 transition-colors duration-300 hover:text-gold"
-                  >
+                  <Link href={item.href} className={linkClass}>
                     {item.label}
                   </Link>
                 </li>
@@ -108,12 +126,10 @@ export function Footer() {
             </ul>
           </nav>
 
-          {/* Contact */}
+          {/* Contact + socials */}
           <div>
-            <h3 className="mb-5 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
-              Contact
-            </h3>
-            <ul className="space-y-3 text-sm text-ivory/70">
+            <h2 className={columnHeadingClass}>Contact</h2>
+            <ul className="mt-5 space-y-3 text-sm text-ivory/70">
               <li>
                 <a
                   href={`mailto:${siteConfig.contact.email}`}
@@ -124,13 +140,14 @@ export function Footer() {
               </li>
               <li className="text-muted">{siteConfig.contact.address}</li>
             </ul>
+
             <div className="mt-6 flex items-center gap-3">
               <a
                 href={siteConfig.socials.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Outskyz on Instagram"
-                className="flex h-10 w-10 items-center justify-center rounded-sm border border-gold/40 text-gold transition-colors duration-300 hover:bg-gold/10"
+                aria-label={`${siteConfig.name} on Instagram`}
+                className={socialClass}
               >
                 <InstagramIcon className="h-4 w-4" />
               </a>
@@ -138,24 +155,25 @@ export function Footer() {
                 href={siteConfig.socials.youtube}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Outskyz on YouTube"
-                className="flex h-10 w-10 items-center justify-center rounded-sm border border-gold/40 text-gold transition-colors duration-300 hover:bg-gold/10"
+                aria-label={`${siteConfig.name} on YouTube`}
+                className={socialClass}
               >
                 <YoutubeIcon className="h-4 w-4" />
               </a>
             </div>
           </div>
         </div>
+      </Container>
 
-        <Divider className="my-10" />
-
-        {/* Legal bar */}
-        <div className="flex flex-col items-center justify-between gap-4 text-xs text-muted sm:flex-row">
+      {/* Band 3 — legal bar */}
+      <div className="border-t border-gold/15 bg-void/40">
+        <Container className="flex flex-col items-center justify-between gap-4 py-6 text-xs text-muted sm:flex-row">
           <p>
-            © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
+            © {new Date().getFullYear()} {siteConfig.name}. All rights
+            reserved.
           </p>
           <nav aria-label="Legal">
-            <ul className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
               {siteConfig.navigation.legal.map((item) => (
                 <li key={item.href}>
                   <Link
@@ -168,8 +186,9 @@ export function Footer() {
               ))}
             </ul>
           </nav>
-        </div>
-      </Container>
+        </Container>
+      </div>
     </footer>
   );
 }
+
