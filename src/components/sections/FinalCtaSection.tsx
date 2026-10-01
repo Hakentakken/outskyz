@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { finalCta } from "@/data/homepage";
 import { resources } from "@/config/resources";
+import { AmbientVideo } from "@/components/ui/AmbientVideo";
 import { fadeUp, staggerContainer, fadeUpViewport } from "@/lib/animations";
 
 /**
@@ -13,17 +14,13 @@ import { fadeUp, staggerContainer, fadeUpViewport } from "@/lib/animations";
 export function FinalCtaSection() {
   return (
     <section className="relative overflow-hidden bg-coal py-28 sm:py-40">
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        aria-hidden="true"
+      {/* Poster paints immediately; the 2.1 MB clip only loads on a wide,
+          non-metered connection — it used to download on every phone. */}
+      <AmbientVideo
+        src={resources.sky.altitudeVideo}
         poster={resources.sky.sunsetFlight}
-        className="absolute inset-0 h-full w-full object-cover opacity-30"
-      >
-        <source src={resources.sky.altitudeVideo} type="video/mp4" />
-      </video>
+        className="opacity-30"
+      />
       <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-void/90 via-coal/85 to-[#071c34]/80" />
       {/* Decorative gold glow */}
       <div

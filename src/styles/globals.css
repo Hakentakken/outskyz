@@ -139,6 +139,87 @@ a {
   55%, 100% { transform: translateX(170%) skewX(-18deg); }
 }
 
+/* ─────────────────────────────────────────────
+   Entrance motion (CSS-driven, JS-free)
+
+   Above-the-fold content must never wait for JavaScript to become visible.
+   framer-motion serialises `initial` into the rendered HTML, so an element
+   with `initial={{ opacity: 0 }}` ships as `style="opacity:0"` and stays
+   invisible until React hydrates. Because the hero <h1> is the LCP element,
+   that turned Largest Contentful Paint into a measurement of hydration time
+   (Lighthouse reported a 2.2 s "element render delay" and a 5.9 s LCP).
+
+   These keyframes start at the first paint instead, so the page is visible
+   immediately and the motion still reads as cinematic. Fill mode is `both`,
+   so under `prefers-reduced-motion` — where the global rule collapses
+   animation durations — elements land on their final, visible state.
+   ───────────────────────────────────────────── */
+
+@keyframes enter-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1.5rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes enter-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes enter-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.enter-rise {
+  animation: enter-rise 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.enter-fade {
+  animation: enter-fade 1.1s ease-out both;
+}
+
+.enter-scale {
+  animation: enter-scale 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Stagger helpers — small steps keep the composition feeling deliberate. */
+.enter-delay-1 { animation-delay: 0.08s; }
+.enter-delay-2 { animation-delay: 0.16s; }
+.enter-delay-3 { animation-delay: 0.24s; }
+.enter-delay-4 { animation-delay: 0.32s; }
+.enter-delay-5 { animation-delay: 0.4s; }
+
+/* Route-change entrance, used by PageTransition. Applied only on in-session
+   navigations: on a cold load the whole page would start at opacity 0, and an
+   element that starts invisible is not eligible to be the LCP candidate. */
+@keyframes enter-page {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.enter-page {
+  animation: enter-page 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+
 h1,
 h2,
 h3,
@@ -294,3 +375,54 @@ h6 {
   pointer-events: none;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
 }
+/* ─────────────────────────────────────────────
+   Mobile menu overlay
+
+   Replaces framer-motion's AnimatePresence. The in/out pairs are separate
+   keyframes rather than one transition because the panel is kept mounted for
+   the duration of the exit, and re-applying a *different* animation name is
+   what restarts the entrance when the menu is reopened mid-close.
+   ───────────────────────────────────────────── */
+
+@keyframes menu-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes menu-overlay-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes menu-item-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes menu-item-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.menu-overlay-in {
+  animation: menu-overlay-in 0.3s ease-out both;
+}
+
+.menu-overlay-out {
+  animation: menu-overlay-out 0.25s ease-in both;
+}
+
+.menu-item-in {
+  animation: menu-item-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.menu-item-out {
+  animation: menu-item-out 0.2s ease-in both;
+}
+

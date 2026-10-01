@@ -11,7 +11,7 @@ import {
 } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import {
-  getBrowserSupabaseClient,
+  loadBrowserSupabaseClient,
   isSupabaseConfigured,
 } from "@/lib/supabase/client";
 import { authErrorMessage, type AuthError } from "@/lib/auth-errors";
@@ -72,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    * invoke this outside the auth-state callback (see the deadlock note below).
    */
   const loadProfile = useCallback(async (userId: string) => {
-    const supabase = getBrowserSupabaseClient();
+    const supabase = await loadBrowserSupabaseClient();
     const { data, error } = await supabase
       .from("profiles")
       .select("*")
@@ -86,13 +86,58 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!configured) return;
 
     let cancelled = false;
-    const supabase = getBrowserSupabaseClient();
+    let unsubscribe: (() => void) | null = null;
 
     /**
      * Resolve the initial session from the SSR cookie so the first paint
-     * already knows whether the visitor is signed in — no logged-out flash.
+     * already knows whether the visitor is signed in - no logged-out flash.
+     *
+     * supabase-js is ~66 KB gzipped and is now fetched lazily (see
+     * loadBrowserSupabaseClient), so this awaits that dynamic import. It runs
+     * from the first idle slot after paint, which is why the header shows its
+     * loading placeholder for a beat on a cold visit.
      */
-    void (async () => {
+    const start = async (): Promise<void> => {
+      const supabase = await loadBrowserSupabaseClient().catch(() => null);
+      if (!supabase) {
+        // Unconfigured, or the chunk never arrived: settle, never crash.
+        if (!cancelled) setIsLoading(false);
+        return;
+      }
+      if (cancelled) return;
+
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((event, newSession) => {
+        if (cancelled) return;
+
+        setSession(newSession);
+        setUser(newSession?.user ?? null);
+        setIsLoading(false);
+
+        if (!newSession?.user) {
+          setProfile(null);
+          return;
+        }
+
+        /*
+         * CRITICAL: never await a Supabase call directly inside this callback.
+         * The auth client holds an internal lock while notifying listeners, so
+         * awaiting another call here can deadlock - which previously left
+         * `profile` (and therefore `isAdmin`) permanently null, silently hiding
+         * the admin UI. Defer with queueMicrotask so the callback returns first.
+         */
+        if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+          queueMicrotask(() => {
+            void loadProfile(newSession.user.id).then((loaded) => {
+              if (!cancelled && loaded) setProfile(loaded);
+            });
+          });
+        }
+      });
+
+      unsubscribe = () => subscription.unsubscribe();
+
       try {
         const {
           data: { session: initialSession },
@@ -111,48 +156,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } finally {
         if (!cancelled) setIsLoading(false);
       }
-    })();
+    };
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, newSession) => {
-      if (cancelled) return;
-
-      setSession(newSession);
-      setUser(newSession?.user ?? null);
-      setIsLoading(false);
-
-      if (!newSession?.user) {
-        setProfile(null);
-        return;
-      }
-
-      /*
-       * CRITICAL: never await a Supabase call directly inside this callback.
-       * The auth client holds an internal lock while notifying listeners, so
-       * awaiting another call here can deadlock — which previously left
-       * `profile` (and therefore `isAdmin`) permanently null, silently hiding
-       * the admin UI. Defer with queueMicrotask so the callback returns first.
-       */
-      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-        queueMicrotask(() => {
-          void loadProfile(newSession.user.id).then((loaded) => {
-            if (!cancelled && loaded) setProfile(loaded);
-          });
-        });
-      }
-    });
+    /*
+     * Keep the auth chunk off the critical path: fetch it in the first idle
+     * slot after paint instead of as part of the initial page bundle. The
+     * timeout guarantees it still runs promptly on a busy main thread.
+     */
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (
+        callback: () => void,
+        options?: { timeout: number },
+      ) => number;
+    };
+    if (typeof idleWindow.requestIdleCallback === "function") {
+      idleWindow.requestIdleCallback(() => void start(), { timeout: 1500 });
+    } else {
+      window.setTimeout(() => void start(), 1);
+    }
 
     return () => {
       cancelled = true;
-      subscription.unsubscribe();
+      unsubscribe?.();
     };
   }, [configured, loadProfile]);
 
   const signIn = useCallback(async (email: string, password: string) => {
     setIsSubmitting(true);
     try {
-      const supabase = getBrowserSupabaseClient();
+      const supabase = await loadBrowserSupabaseClient();
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) return { error: authErrorMessage(error) };
       return { error: null };
@@ -167,7 +199,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (email: string, password: string, fullName: string) => {
       setIsSubmitting(true);
       try {
-        const supabase = getBrowserSupabaseClient();
+        const supabase = await loadBrowserSupabaseClient();
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
@@ -200,7 +232,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = useCallback(async () => {
     try {
-      const supabase = getBrowserSupabaseClient();
+      const supabase = await loadBrowserSupabaseClient();
       await supabase.auth.signOut();
     } catch {
       // Clear local state regardless so the UI never gets stuck signed in.
@@ -212,7 +244,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const requestPasswordReset = useCallback(async (email: string) => {
     try {
-      const supabase = getBrowserSupabaseClient();
+      const supabase = await loadBrowserSupabaseClient();
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
       });
@@ -225,7 +257,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const updatePassword = useCallback(async (password: string) => {
     try {
-      const supabase = getBrowserSupabaseClient();
+      const supabase = await loadBrowserSupabaseClient();
       const { error } = await supabase.auth.updateUser({ password });
       if (error) return { error: authErrorMessage(error) };
       return { error: null };

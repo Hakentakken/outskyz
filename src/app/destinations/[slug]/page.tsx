@@ -8,6 +8,7 @@ import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Container } from "@/components/ui/Container";
 import { GoldLine } from "@/components/ui/GoldLine";
 import { resources } from "@/config/resources";
+import { AmbientVideo } from "@/components/ui/AmbientVideo";
 import { destinations, getDestinationBySlug } from "@/data/destinations";
 import { getPackageBySlug } from "@/data/packages";
 
@@ -50,16 +51,10 @@ export default async function DestinationPage({ params }: Props) {
     <>
       {/* Hero */}
       <section className="relative flex min-h-[70vh] items-center pt-20">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
+        <AmbientVideo
+          src={resources.sky.heroVideo}
           poster={resources.sky.heroPoster}
-          className="absolute inset-0 h-full w-full object-cover"
-        >
-          <source src={resources.sky.heroVideo} type="video/mp4" />
-        </video>
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-void via-void/60 to-transparent" />
         <div className="relative mx-auto max-w-4xl px-6 py-24 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">

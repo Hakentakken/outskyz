@@ -3,8 +3,10 @@
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createBrowserClient } from "@supabase/ssr";
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/supabase/client";
+import {
+  isSupabaseConfigured,
+  loadBrowserSupabaseClient,
+} from "@/lib/supabase/client";
 
 type Status = "working" | "success" | "error";
 
@@ -47,7 +49,7 @@ function AuthCallbackInner() {
     let cancelled = false;
 
     const run = async () => {
-      if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      if (!isSupabaseConfigured) {
         if (!cancelled) {
           setStatus("error");
           setMessage("Sign-in is temporarily unavailable. Please try again later.");
@@ -55,7 +57,7 @@ function AuthCallbackInner() {
         return;
       }
 
-      const supabase = createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      const supabase = await loadBrowserSupabaseClient();
       const next = searchParams.get("next") ?? "/";
 
       // Give the client a moment to parse the URL fragment on its own.

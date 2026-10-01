@@ -5,11 +5,10 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useState,
   type ReactNode,
 } from "react";
-import { tryGetBrowserSupabaseClient } from "@/lib/supabase/client";
+import { loadBrowserSupabaseClient } from "@/lib/supabase/client";
 import { useAuth } from "./AuthContext";
 
 export interface CartItem {
@@ -45,28 +44,40 @@ interface CartContextValue {
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
 
+/**
+ * Cart state.
+ *
+ * The Supabase client is resolved inside each operation rather than captured
+ * during render: it is loaded lazily after first paint (see
+ * loadBrowserSupabaseClient), so a render-time grab could only ever return
+ * "not ready yet". Every path here is already async, so awaiting the loader
+ * costs nothing once it has been fetched.
+ */
 export function CartProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [items, setItems] = useState<CartItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Resolved lazily and safely: must never throw during render.
-  const supabase = useMemo(() => tryGetBrowserSupabaseClient(), []);
-
   const fetchCart = useCallback(async () => {
-    if (!user || !supabase) {
+    if (!user) {
       setItems([]);
       return;
     }
     setIsLoading(true);
-    const { data, error } = await supabase
-      .from("cart_items")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: true });
-    if (!error && data) setItems(data as CartItem[]);
-    setIsLoading(false);
-  }, [user, supabase]);
+    try {
+      const supabase = await loadBrowserSupabaseClient();
+      const { data, error } = await supabase
+        .from("cart_items")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: true });
+      if (!error && data) setItems(data as CartItem[]);
+    } catch {
+      // A failed read must never break the page: the cart is an enhancement.
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user]);
 
   useEffect(() => {
     let cancelled = false;
@@ -93,11 +104,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     unitPrice: number;
     currency?: string;
   }) => {
-    if (!user || !supabase) {
+    if (!user) {
       return { error: "Please sign in to add items to your cart." };
     }
 
     try {
+      const supabase = await loadBrowserSupabaseClient();
+
       // The server looks up the active admin-managed price before creating the
       // cart item; a browser-provided price must never be trusted for checkout.
       const { data: sessionData } = await supabase.auth.getSession();
@@ -118,21 +131,36 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const removeFromCart = async (itemId: string) => {
-    if (!user || !supabase) return;
-    await supabase.from("cart_items").delete().eq("id", itemId);
+    if (!user) return;
+    try {
+      const supabase = await loadBrowserSupabaseClient();
+      await supabase.from("cart_items").delete().eq("id", itemId);
+    } catch {
+      // Ignore: the refresh below re-syncs from the source of truth.
+    }
     await fetchCart();
   };
 
   const updateQuantity = async (itemId: string, quantity: number) => {
-    if (!user || !supabase || quantity < 1) return;
-    await supabase.from("cart_items").update({ quantity }).eq("id", itemId);
+    if (!user || quantity < 1) return;
+    try {
+      const supabase = await loadBrowserSupabaseClient();
+      await supabase.from("cart_items").update({ quantity }).eq("id", itemId);
+    } catch {
+      // See removeFromCart.
+    }
     await fetchCart();
   };
 
   const clearCart = async () => {
-    if (!user || !supabase) return;
-    await supabase.from("cart_items").delete().eq("user_id", user.id);
-    setItems([]);
+    if (!user) return;
+    try {
+      const supabase = await loadBrowserSupabaseClient();
+      await supabase.from("cart_items").delete().eq("user_id", user.id);
+      setItems([]);
+    } catch {
+      // See removeFromCart.
+    }
   };
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);

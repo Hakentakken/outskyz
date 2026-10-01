@@ -1,4 +1,3 @@
-import { createBrowserClient } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 /**
@@ -27,35 +26,54 @@ export class SupabaseNotConfiguredError extends Error {
 }
 
 let browserClient: SupabaseClient | null = null;
+let clientPromise: Promise<SupabaseClient> | null = null;
 
 /**
- * Singleton browser Supabase client.
+ * Resolve the singleton browser Supabase client, fetching supabase-js on demand.
  *
  * Uses `@supabase/ssr` so the auth session is stored in **cookies the server can
- * read**. This is what makes server-side route protection possible — with the
+ * read**. This is what makes server-side route protection possible - with the
  * previous localStorage-only client, the server never saw a session and could
  * not guard anything.
  *
- * Created lazily so importing this module never throws: a missing env var must
- * degrade a page, not white-screen the entire site.
+ * The library itself is imported dynamically rather than at the top of this
+ * module. `@supabase/ssr` + `@supabase/supabase-js` (auth + PostgREST +
+ * realtime) are ~250 KB raw and the root layout's AuthProvider imports this
+ * module on *every* page, so a static import shipped the whole thing to
+ * anonymous visitors who never sign in - first paint waited on it. Importing it
+ * dynamically produces a separate chunk that is fetched once, on demand, from
+ * the first idle slot after paint.
+ *
+ * Callers must therefore `await` the client. The previous synchronous
+ * `getBrowserSupabaseClient()` could only have worked before paint, which is
+ * exactly the behaviour that was costing us the LCP.
  */
-export function getBrowserSupabaseClient(): SupabaseClient {
-  if (browserClient) return browserClient;
-  if (!isSupabaseConfigured) throw new SupabaseNotConfiguredError();
+export function loadBrowserSupabaseClient(): Promise<SupabaseClient> {
+  if (browserClient) return Promise.resolve(browserClient);
+  if (!isSupabaseConfigured) {
+    return Promise.reject(new SupabaseNotConfiguredError());
+  }
 
-  browserClient = createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  return browserClient;
+  clientPromise ??= import("@supabase/ssr")
+    .then(({ createBrowserClient }) => {
+      browserClient = createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      return browserClient;
+    })
+    .catch((error: unknown) => {
+      // Don't cache a rejection: a flaky network should be retryable.
+      clientPromise = null;
+      throw error;
+    });
+
+  return clientPromise;
 }
 
 /**
- * Non-throwing variant for render paths. Returns `null` when Supabase is not
- * configured so callers can show a graceful fallback instead of crashing.
+ * The client if it has already been loaded, otherwise `null`.
+ *
+ * Synchronous and side-effect free, for render paths that only want to use the
+ * client when it happens to be ready.
  */
-export function tryGetBrowserSupabaseClient(): SupabaseClient | null {
-  if (!isSupabaseConfigured) return null;
-  try {
-    return getBrowserSupabaseClient();
-  } catch {
-    return null;
-  }
+export function peekBrowserSupabaseClient(): SupabaseClient | null {
+  return browserClient;
 }

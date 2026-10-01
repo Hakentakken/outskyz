@@ -9,6 +9,7 @@ import { Container } from "@/components/ui/Container";
 import { Badge } from "@/components/ui/Badge";
 import { GoldLine } from "@/components/ui/GoldLine";
 import { resources } from "@/config/resources";
+import { AmbientVideo } from "@/components/ui/AmbientVideo";
 import { AdventureExperience } from "@/components/sections/AdventureExperience";
 import { AddToCartButton } from "@/components/cards/AddToCartButton";
 import {
@@ -52,16 +53,10 @@ export default async function AdventurePage({ params }: Props) {
     <>
       {/* Hero */}
       <section className="relative flex min-h-[70vh] items-center pt-20">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
+        <AmbientVideo
+          src={resources.sky.heroVideo}
           poster={resources.sky.heroPoster}
-          className="absolute inset-0 h-full w-full object-cover"
-        >
-          <source src={resources.sky.heroVideo} type="video/mp4" />
-        </video>
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-void via-void/60 to-transparent" />
         <div className="relative mx-auto max-w-4xl px-6 py-24 text-center">
           <Badge className="mb-4">{adventure.categoryLabel}</Badge>

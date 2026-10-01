@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { loadBrowserSupabaseClient } from "@/lib/supabase/client";
 import { PageHero } from "@/components/sections/PageHero";
 import { Section } from "@/components/sections/Section";
 import { Container } from "@/components/ui/Container";
@@ -77,7 +78,7 @@ export default function AdminPanelClient() {
   useEffect(() => {
     if (!isAdmin) return;
     const fetchData = async () => {
-      const supabase = (await import("@/lib/supabase/client")).getBrowserSupabaseClient();
+      const supabase = await loadBrowserSupabaseClient();
 
       const [advRes, destRes, pkgRes, galRes, ordRes] = await Promise.all([
         supabase.from("adventures").select("*").order("created_at"),
@@ -98,7 +99,7 @@ export default function AdminPanelClient() {
     const syncAdventures = async () => {
     setSaving(true);
     setMessage(null);
-    const supabase = (await import("@/lib/supabase/client")).getBrowserSupabaseClient();
+    const supabase = await loadBrowserSupabaseClient();
 
     // Preserve manually-set rates: read existing prices/currency before
     // overwriting descriptive content from the static seed. New seed
@@ -155,7 +156,7 @@ export default function AdminPanelClient() {
   const saveAdventureForm = async (data: AdventureFormValues) => {
     setSaving(true);
     setMessage(null);
-    const supabase = (await import("@/lib/supabase/client")).getBrowserSupabaseClient();
+    const supabase = await loadBrowserSupabaseClient();
     const { error } = await supabase.from("adventures").upsert(
       {
         slug: data.slug,
@@ -194,7 +195,7 @@ export default function AdminPanelClient() {
 
   const deleteAdventure = async (id: string, title: string) => {
     if (!confirm(`Remove "${title}"? This cannot be undone.`)) return;
-    const supabase = (await import("@/lib/supabase/client")).getBrowserSupabaseClient();
+    const supabase = await loadBrowserSupabaseClient();
     const { error } = await supabase.from("adventures").delete().eq("id", id);
     if (!error) {
       setDbAdventures((prev) => prev.filter((a) => a.id !== id));
@@ -206,7 +207,7 @@ export default function AdminPanelClient() {
     const syncDestinations = async () => {
     setSaving(true);
     setMessage(null);
-    const supabase = (await import("@/lib/supabase/client")).getBrowserSupabaseClient();
+    const supabase = await loadBrowserSupabaseClient();
 
     for (const destination of destinations) {
       const { error } = await supabase.from("destinations").upsert(
@@ -238,7 +239,7 @@ export default function AdminPanelClient() {
   const syncPackages = async () => {
     setSaving(true);
     setMessage(null);
-    const supabase = (await import("@/lib/supabase/client")).getBrowserSupabaseClient();
+    const supabase = await loadBrowserSupabaseClient();
 
     for (const pkg of packages) {
       const { error } = await supabase.from("packages").upsert(
@@ -274,7 +275,7 @@ export default function AdminPanelClient() {
   const syncGallery = async () => {
     setSaving(true);
     setMessage(null);
-    const supabase = (await import("@/lib/supabase/client")).getBrowserSupabaseClient();
+    const supabase = await loadBrowserSupabaseClient();
 
     for (const image of galleryImages) {
       const { error } = await supabase.from("gallery_images").upsert(
@@ -300,7 +301,7 @@ export default function AdminPanelClient() {
     setSaving(false);
   };
     const updateAdventurePrice = async (id: string, price: number) => {
-    const supabase = (await import("@/lib/supabase/client")).getBrowserSupabaseClient();
+    const supabase = await loadBrowserSupabaseClient();
     const { error } = await supabase.from("adventures").update({ price }).eq("id", id);
     if (!error) {
       setDbAdventures((prev) => prev.map((a) => (a.id === id ? { ...a, price } : a)));
@@ -311,7 +312,7 @@ export default function AdminPanelClient() {
   };
 
   const updatePackagePrice = async (id: string, price: number) => {
-    const supabase = (await import("@/lib/supabase/client")).getBrowserSupabaseClient();
+    const supabase = await loadBrowserSupabaseClient();
     const { error } = await supabase.from("packages").update({ price }).eq("id", id);
     if (!error) {
       setDbPackages((prev) => prev.map((p) => (p.id === id ? { ...p, price } : p)));
@@ -322,7 +323,7 @@ export default function AdminPanelClient() {
   };
 
   const toggleAdventureActive = async (id: string, isActive: boolean) => {
-    const supabase = (await import("@/lib/supabase/client")).getBrowserSupabaseClient();
+    const supabase = await loadBrowserSupabaseClient();
     const { error } = await supabase.from("adventures").update({ is_active: isActive }).eq("id", id);
     if (!error) {
       setDbAdventures((prev) => prev.map((a) => (a.id === id ? { ...a, is_active: isActive } : a)));
@@ -330,7 +331,7 @@ export default function AdminPanelClient() {
   };
 
   const toggleGalleryActive = async (id: string, isActive: boolean) => {
-    const supabase = (await import("@/lib/supabase/client")).getBrowserSupabaseClient();
+    const supabase = await loadBrowserSupabaseClient();
     const { error } = await supabase.from("gallery_images").update({ is_active: isActive }).eq("id", id);
     if (!error) {
       setDbGallery((prev) => prev.map((g) => (g.id === id ? { ...g, is_active: isActive } : g)));
@@ -338,7 +339,7 @@ export default function AdminPanelClient() {
   };
 
   const deleteGalleryImage = async (id: string) => {
-    const supabase = (await import("@/lib/supabase/client")).getBrowserSupabaseClient();
+    const supabase = await loadBrowserSupabaseClient();
     const { error } = await supabase.from("gallery_images").delete().eq("id", id);
     if (!error) {
       setDbGallery((prev) => prev.filter((g) => g.id !== id));
@@ -347,7 +348,7 @@ export default function AdminPanelClient() {
   };
 
   const addGalleryImage = async (src: string, alt: string, category: string, categoryLabel: string) => {
-    const supabase = (await import("@/lib/supabase/client")).getBrowserSupabaseClient();
+    const supabase = await loadBrowserSupabaseClient();
     const { error } = await supabase.from("gallery_images").insert({
       src,
       alt,
@@ -365,7 +366,7 @@ export default function AdminPanelClient() {
   };
 
   const updateOrderStatus = async (id: string, status: string) => {
-    const supabase = (await import("@/lib/supabase/client")).getBrowserSupabaseClient();
+    const supabase = await loadBrowserSupabaseClient();
     const { error } = await supabase.from("orders").update({ status }).eq("id", id);
     if (!error) {
       setDbOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status } : o)));
@@ -377,7 +378,7 @@ export default function AdminPanelClient() {
 
   const syncOrders = async () => {
     setSaving(true);
-    const supabase = (await import("@/lib/supabase/client")).getBrowserSupabaseClient();
+    const supabase = await loadBrowserSupabaseClient();
     const { data, error } = await supabase
       .from("orders")
       .select("*")

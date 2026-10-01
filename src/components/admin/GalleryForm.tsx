@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { cn } from "@/utils/cn";
-import { galleryCategories, type GalleryImage } from "@/data/gallery";
+import { galleryCategories } from "@/data/gallery";
 
 const categoryOptions = galleryCategories.filter((c) => c.id !== "all");
 

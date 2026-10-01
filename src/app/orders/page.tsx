@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import { loadBrowserSupabaseClient } from "@/lib/supabase/client";
 import { PageHero } from "@/components/sections/PageHero";
 import { Section } from "@/components/sections/Section";
 import { Container } from "@/components/ui/Container";
@@ -28,7 +29,7 @@ export default function OrdersPage() {
         setLoading(false);
         return;
       }
-      const supabase = (await import("@/lib/supabase/client")).getBrowserSupabaseClient();
+      const supabase = await loadBrowserSupabaseClient();
       const { data, error } = await supabase
         .from("orders")
         .select("*")
