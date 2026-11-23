@@ -1,5 +1,8 @@
 import type { NavItem, SocialLinks } from "@/types";
 
+const contactEmail = "paradise@oudskyz.com";
+const contactPhone = "+918448644178";
+
 export const siteConfig = {
   name: "Outskyz",
   shortName: "Outskyz",
@@ -70,9 +73,12 @@ export const siteConfig = {
     ] satisfies NavItem[],
   },
   contact: {
-    email: "outskyzz@gmail.com",
+    email: contactEmail,
+    phone: contactPhone,
+    phoneDisplay: "+91 84486 44178",
+    whatsappUrl: `https://wa.me/${contactPhone.replace(/\D/g, "")}?text=${encodeURIComponent("I would like to inquire about packages.")}`,
     address: "Gurugram, Haryana, India",
-    bookingsEmail: "outskyzz@gmail.com",
+    bookingsEmail: contactEmail,
   },
   socials: {
     instagram: "https://instagram.com",

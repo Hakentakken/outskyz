@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { HeroSection } from "@/components/sections/HeroSection";
+import { JourneyIntro } from "@/components/sections/JourneyIntro";
 import { AdventuresSection } from "@/components/sections/AdventuresSection";
 import { WhyOutskyzSection } from "@/components/sections/WhyOutskyzSection";
 import { DestinationsSection } from "@/components/sections/DestinationsSection";
@@ -36,6 +37,7 @@ const organizationStructuredData = {
   url: siteConfig.url,
   description: siteConfig.description,
   email: siteConfig.contact.email,
+  telephone: siteConfig.contact.phone,
   address: {
     "@type": "PostalAddress",
     addressLocality: siteConfig.contact.address,
@@ -53,6 +55,7 @@ export default function Home() {
         }}
       />
       <HeroSection />
+      <JourneyIntro />
       <AdventuresSection />
       <WhyOutskyzSection />
       <DestinationsSection animate="fade-up" animateDelay={100} />

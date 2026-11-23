@@ -201,8 +201,8 @@ export function DocumentaryReel() {
         {/* PRESENTATION: scrims + grain. Static gradients keep the headline
             legible against any frame; the grain is a tiny tiled SVG at very
             low opacity — no canvas, no per-frame cost. */}
-        <div className="absolute inset-0 bg-gradient-to-r from-void via-void/72 to-[#061b35]/15" />
-        <div className="absolute inset-0 bg-gradient-to-t from-void via-transparent to-[#061b35]/35" />
+        <div className="absolute inset-0 bg-gradient-to-r from-void/90 via-void/45 to-void/5" />
+        <div className="absolute inset-0 bg-gradient-to-t from-void/70 via-transparent to-[#061b35]/20" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_45%,transparent_55%,rgba(2,10,20,0.55)_100%)]" />
         <div className="reel-grain absolute inset-0 opacity-[0.07]" />
 
@@ -225,8 +225,8 @@ export function DocumentaryReel() {
       {/* PRESENTATION: chapter rail — "THE OUTSKYZ FILM · 01 / 06" with a
           hairline progress track. Driven by `activeClip`; seeking reuses the
           same single-<video> hand-off as natural `ended` advancement. */}
-      {running && !fallbackFailed && !usingFallback ? (
-        <div className="absolute bottom-5 left-6 z-20 sm:left-8 lg:bottom-8 lg:left-12">
+      {running && !fallbackFailed && !usingFallback && !playbackRefused ? (
+        <div className="absolute bottom-24 left-6 z-20 sm:bottom-8 sm:left-8 lg:left-12">
           <p className="text-[0.6rem] font-semibold uppercase tracking-[0.32em] text-gold/90">
             The Outskyz film
           </p>
@@ -243,7 +243,7 @@ export function DocumentaryReel() {
           <div
             role="tablist"
             aria-label="Documentary chapters"
-            className="mt-3 flex items-center gap-2"
+            className="mt-3 flex items-center gap-0 sm:gap-2"
           >
             {clips.map((clip, index) => (
               <button
@@ -285,7 +285,7 @@ export function DocumentaryReel() {
             // click's transient activation lets play() start right away.
             window.setTimeout(() => videoRef.current?.play().catch(() => {}), 0);
           }}
-          className="group absolute bottom-5 right-6 z-20 flex items-center gap-3 rounded-full border border-gold/50 bg-void/70 px-5 py-3 backdrop-blur-sm transition-all duration-300 hover:border-gold hover:bg-gold/15 sm:right-8 lg:bottom-8 lg:right-12"
+          className="group absolute bottom-24 left-6 z-20 flex items-center gap-3 rounded-full border border-gold/50 bg-void/70 px-4 py-3 backdrop-blur-sm transition-all duration-300 hover:border-gold hover:bg-gold/15 sm:bottom-8 sm:left-8 lg:left-12"
         >
           <span className="flex h-9 w-9 items-center justify-center rounded-full border border-gold/70 text-gold transition-colors duration-300 group-hover:bg-gold group-hover:text-black">
             <svg viewBox="0 0 24 24" fill="currentColor" className="ml-0.5 h-4 w-4" aria-hidden="true">

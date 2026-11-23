@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, MessageCircle, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { PageHero } from "@/components/sections/PageHero";
 import { images } from "@/config/images";
 import { Section } from "@/components/sections/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { Container } from "@/components/ui/Container";
+import { WhatsAppIcon } from "@/components/ui/SocialIcon";
 import { siteConfig } from "@/config/site";
 import { fadeUp, staggerContainer, fadeUpViewport } from "@/lib/animations";
 
@@ -50,7 +51,7 @@ export default function ContactPage() {
     );
 
     // Opens the visitor's mail client with the enquiry pre-addressed
-    // directly to the Outskyz inbox (outskyzz@gmail.com).
+    // directly to the configured Outskyz inbox.
     window.location.href = `mailto:${siteConfig.contact.email}?subject=${subject}&body=${body}`;
   };
 
@@ -94,7 +95,7 @@ export default function ContactPage() {
             <h3 className="mt-4 font-display text-lg text-ivory">Email</h3>
             <a
               href={`mailto:${siteConfig.contact.email}`}
-              className="mt-2 text-sm text-muted transition-colors hover:text-gold"
+              className="mt-2 inline-flex min-h-11 items-center break-all text-sm text-muted transition-colors hover:text-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
             >
               {siteConfig.contact.email}
             </a>
@@ -104,13 +105,23 @@ export default function ContactPage() {
             variants={fadeUp}
             className="flex flex-col items-center rounded-md border border-gold/20 bg-coal/50 p-8 text-center"
           >
-            <MessageCircle className="h-8 w-8 text-gold" aria-hidden="true" />
-            <h3 className="mt-4 font-display text-lg text-ivory">Bookings</h3>
+            <Phone className="h-8 w-8 text-gold" aria-hidden="true" />
+            <h3 className="mt-4 font-display text-lg text-ivory">Call or WhatsApp</h3>
             <a
-              href={`mailto:${siteConfig.contact.bookingsEmail}`}
-              className="mt-2 text-sm text-muted transition-colors hover:text-gold"
+              href={`tel:${siteConfig.contact.phone}`}
+              className="mt-2 inline-flex min-h-11 items-center text-sm text-muted transition-colors hover:text-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
             >
-              {siteConfig.contact.bookingsEmail}
+              {siteConfig.contact.phoneDisplay}
+            </a>
+            <a
+              href={siteConfig.contact.whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex min-h-11 items-center justify-center gap-2 rounded-sm border border-gold/30 px-4 py-2 text-sm font-medium text-gold transition-colors hover:bg-gold/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+            >
+              <WhatsAppIcon className="h-4 w-4 shrink-0" />
+              Chat about packages
+              <span className="sr-only"> on WhatsApp (opens in a new tab)</span>
             </a>
           </motion.div>
 

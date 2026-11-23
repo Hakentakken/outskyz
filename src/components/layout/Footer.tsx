@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { InstagramIcon, YoutubeIcon } from "@/components/ui/SocialIcon";
+import { InstagramIcon, WhatsAppIcon, YoutubeIcon } from "@/components/ui/SocialIcon";
 import { resources } from "@/config/resources";
 import { siteConfig } from "@/config/site";
 import { Container } from "@/components/ui/Container";
@@ -133,15 +133,32 @@ export function Footer() {
               <li>
                 <a
                   href={`mailto:${siteConfig.contact.email}`}
-                  className="inline-block py-1 text-sm transition-colors duration-300 hover:text-gold"
+                  className="inline-flex min-h-11 items-center break-all text-sm transition-colors duration-300 hover:text-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
                 >
                   {siteConfig.contact.email}
+                </a>
+              </li>
+              <li>
+                <a
+                  href={`tel:${siteConfig.contact.phone}`}
+                  className="inline-flex min-h-11 items-center text-sm transition-colors duration-300 hover:text-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                >
+                  {siteConfig.contact.phoneDisplay}
                 </a>
               </li>
               <li className="text-muted">{siteConfig.contact.address}</li>
             </ul>
 
             <div className="mt-6 flex items-center gap-3">
+              <a
+                href={siteConfig.contact.whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Inquire about ${siteConfig.name} packages on WhatsApp (opens in a new tab)`}
+                className={socialClass}
+              >
+                <WhatsAppIcon className="h-4 w-4" />
+              </a>
               <a
                 href={siteConfig.socials.instagram}
                 target="_blank"
@@ -167,12 +184,12 @@ export function Footer() {
 
       {/* Band 3 — legal bar */}
       <div className="border-t border-gold/15 bg-void/40">
-        <Container className="flex flex-col items-center justify-between gap-4 py-6 text-xs text-muted sm:flex-row">
+        <Container className="flex flex-col items-center justify-between gap-4 pt-6 pb-24 text-xs text-muted sm:flex-row sm:py-6">
           <p>
             © {new Date().getFullYear()} {siteConfig.name}. All rights
             reserved.
           </p>
-          <nav aria-label="Legal">
+          <nav aria-label="Legal" className="sm:mr-16">
             <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
               {siteConfig.navigation.legal.map((item) => (
                 <li key={item.href}>

@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { RevealProvider } from "@/components/ui/Reveal";
+import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import "@/styles/globals.css";
@@ -74,11 +75,13 @@ export default function RootLayout({
             it the `.reveal` elements simply stay visible, which is the state
             we want for no-JS and reduced-motion visitors. */}
         <RevealProvider />
+        <div className="travel-scroll-progress" aria-hidden="true" />
         <AuthProvider>
           <CartProvider>
             <Header />
             <PageTransition>{children}</PageTransition>
             <Footer />
+            <WhatsAppButton />
           </CartProvider>
         </AuthProvider>
       </body>

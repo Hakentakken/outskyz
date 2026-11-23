@@ -1,26 +1,20 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { PageHero } from "@/components/sections/PageHero";
 import { Section } from "@/components/sections/Section";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
-import { Container } from "@/components/ui/Container";
-import { LazyVideoTile } from "@/components/ui/LazyVideoTile";
+import { GalleryExperience } from "@/components/ui/GalleryExperience";
 import { galleryImages, galleryHero, galleryCategories } from "@/data/gallery";
-import { fadeUp, staggerContainer, fadeUpViewport } from "@/lib/animations";
-
 
 type CategoryId = (typeof galleryCategories)[number]["id"];
 
 export default function GalleryPage() {
   const [activeCategory, setActiveCategory] = useState<CategoryId>("all");
-
   const filtered =
     activeCategory === "all"
       ? galleryImages
-      : galleryImages.filter((img) => img.category === activeCategory);
+      : galleryImages.filter((image) => image.category === activeCategory);
 
   return (
     <>
@@ -29,72 +23,40 @@ export default function GalleryPage() {
         subtitle={galleryHero.subtitle}
         image={galleryHero.image}
       />
-
-      <Section background="default" spacing="small">
-        <Container>
-          <Breadcrumb
-            items={[
-              { label: "Home", href: "/" },
-              { label: "Gallery" },
-            ]}
-          />
-          <div className="mt-5 flex flex-wrap items-center gap-3 rounded-md border border-gold/15 bg-coal/40 p-3">
+      <Section background="default" spacing="small" animate="none">
+        <Breadcrumb
+          items={[{ label: "Home", href: "/" }, { label: "Gallery" }]}
+        />
+        <div className="border-gold/20 mt-8 flex flex-col justify-between gap-5 border-b pb-5 sm:flex-row sm:items-center">
+          <div
+            className="flex flex-wrap gap-2"
+            role="group"
+            aria-label="Filter gallery"
+          >
             {galleryCategories.map((category) => (
               <button
                 key={category.id}
+                type="button"
                 onClick={() => setActiveCategory(category.id)}
-                className={`rounded-sm border px-5 py-2 text-xs font-semibold uppercase tracking-widest transition-all duration-300 ${
-                  activeCategory === category.id
-                    ? "border-gold bg-gold text-black"
-                    : "border-gold/30 text-ivory/60 hover:border-gold/60 hover:text-ivory"
-                }`}
+                aria-pressed={activeCategory === category.id}
+                className={
+                  "min-h-11 rounded-full border px-5 py-2 text-xs font-semibold tracking-widest uppercase transition-colors " +
+                  (activeCategory === category.id
+                    ? "border-gold bg-gold text-void"
+                    : "border-gold/25 text-ivory/70 hover:border-gold hover:text-gold")
+                }
               >
                 {category.label}
               </button>
             ))}
           </div>
-        </Container>
+          <p className="text-muted text-xs" role="status">
+            {filtered.length} moments to explore
+          </p>
+        </div>
       </Section>
-
-      {/* Gallery Grid */}
-      <Section background="default" spacing="medium">
-        <motion.div
-          className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4"
-          variants={staggerContainer}
-          {...fadeUpViewport}
-        >
-          <AnimatePresence>
-            {filtered.map((image) => (
-              <motion.div
-                key={image.src}
-                layout
-                variants={fadeUp}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-                className="group relative aspect-square overflow-hidden rounded-md border border-gold/20 bg-coal"
-              >
-                {image.type === "video" ? (
-                  <LazyVideoTile
-                    src={image.src}
-                    alt={image.alt}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                ) : (
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    fill
-                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-void/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+      <Section background="default" spacing="medium" animate="none">
+        <GalleryExperience images={filtered} />
       </Section>
     </>
   );

@@ -71,7 +71,7 @@ export function AdventuresSection({ animate, animateDelay }: { animate?: Animati
                     {adventure.description}
                   </p>
                   <Link
-                    href="/adventures"
+                    href={"/adventures/" + adventure.id}
                     className="mt-4 inline-flex min-h-[44px] items-center gap-2 py-2 text-xs font-semibold uppercase tracking-widest text-gold transition-colors hover:text-gold-bright"
                   >
                     Discover

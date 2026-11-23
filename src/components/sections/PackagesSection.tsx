@@ -1,6 +1,7 @@
 "use client";
 
 import { MapPin, Clock } from "lucide-react";
+import Link from "next/link";
 import { Section } from "@/components/sections/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Badge } from "@/components/ui/Badge";
@@ -78,12 +79,12 @@ export function PackagesSection({ animate, animateDelay }: { animate?: Animation
                 aria-hidden="true"
                 className="absolute inset-x-0 bottom-0 bottom-3 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent"
               />
-              <a
+              <Link
                 href="/contact"
                 className="mt-8 inline-flex w-full items-center justify-center rounded-sm bg-gold px-8 py-3.5 text-sm font-semibold uppercase tracking-widest text-black transition-all duration-300 hover:bg-gold-bright hover:shadow-[0_0_25px_rgba(212,175,55,0.35)]"
               >
                 Book Now
-              </a>
+              </Link>
             </div>
           </Reveal>
         ))}
