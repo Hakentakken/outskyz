@@ -2,24 +2,26 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Section } from "@/components/sections/Section";
 import { GoldLine } from "@/components/ui/GoldLine";
+import { Reveal } from "@/components/ui/Reveal";
 import { foundersPreview } from "@/data/founders";
-import { slideLeft, slideRight, fadeUpViewport } from "@/lib/animations";
 
 type AnimationType = "fade-up" | "fade-in" | "scale-in" | "slide-left" | "slide-right" | "none";
 
 /**
- * Section 6 — Founders Preview.
- * Split layout: left heading + text + button, right image placeholder.
+ * Section 6 - Founders Preview.
+ *
+ * Two shots cutting against each other: the copy slides in from the left, the
+ * frame from the right, and the portrait inside settles from 1.06 so the pair
+ * lands as one beat. Hovering the frame pushes the photograph back in.
  */
 export function FoundersSection({ animate, animateDelay }: { animate?: AnimationType; animateDelay?: number } = {}) {
   return (
     <Section background="default" spacing="large" animate={animate} animateDelay={animateDelay}>
       <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
-        {/* Left — content */}
-        <motion.div variants={slideLeft} {...fadeUpViewport}>
+        {/* Left - content */}
+        <Reveal variant="left">
           <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-gold">
             {foundersPreview.eyebrow}
           </p>
@@ -36,13 +38,14 @@ export function FoundersSection({ animate, animateDelay }: { animate?: Animation
           >
             {foundersPreview.cta.label}
           </Link>
-        </motion.div>
+        </Reveal>
 
-        {/* Right — image */}
-        <motion.div
-          variants={slideRight}
-          {...fadeUpViewport}
-          className="relative aspect-[4/3] overflow-hidden rounded-md border border-gold/20 bg-coal"
+        {/* Right - image. The frame itself carries `img-cinematic`, so the
+            settle-and-push treatment applies to the photograph inside it. */}
+        <Reveal
+          variant="right"
+          delay={120}
+          className="img-cinematic relative aspect-[4/3] overflow-hidden rounded-md border border-gold/20 bg-coal"
         >
           <Image
             src={foundersPreview.image}
@@ -52,7 +55,7 @@ export function FoundersSection({ animate, animateDelay }: { animate?: Animation
             className="object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-void/60 via-transparent to-transparent" />
-        </motion.div>
+        </Reveal>
       </div>
     </Section>
   );

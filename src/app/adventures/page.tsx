@@ -50,7 +50,7 @@ export default function AdventuresPage() {
                 onClick={() =>
                   setActiveCategory(category.id as AdventureCategory | "all")
                 }
-                className={`rounded-sm border px-5 py-2 text-xs font-semibold uppercase tracking-widest transition-all duration-300 ${
+                className={`min-h-[44px] rounded-sm border px-5 py-2.5 text-xs font-semibold uppercase tracking-widest transition-all duration-300 ${
                   activeCategory === category.id
                     ? "border-gold bg-gold text-black"
                     : "border-gold/30 text-ivory/60 hover:border-gold/60 hover:text-ivory"
@@ -113,7 +113,7 @@ export default function AdventuresPage() {
                     </p>
                     <Link
                       href={`/adventures/${adventure.slug}`}
-                      className="mt-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-gold transition-colors hover:text-gold-bright"
+                      className="mt-4 inline-flex min-h-[44px] items-center gap-2 py-2 text-xs font-semibold uppercase tracking-widest text-gold transition-colors hover:text-gold-bright"
                     >
                       Explore
                       <ArrowUpRight

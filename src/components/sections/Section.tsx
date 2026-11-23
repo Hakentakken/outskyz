@@ -1,8 +1,6 @@
-"use client";
-
 import { cn } from "@/utils/cn";
 import { Container } from "@/components/ui/Container";
-import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { Reveal, revealVariantFromAnimation } from "@/components/ui/Reveal";
 
 type SectionBackground = "default" | "dark" | "image";
 type SectionSpacing = "small" | "medium" | "large";
@@ -34,6 +32,18 @@ const spacingClasses: Record<SectionSpacing, string> = {
 /**
  * Reusable page section with background and vertical spacing variants.
  * `background="image"` renders a full-bleed image behind the content.
+ *
+ * MOTION
+ * ------
+ * `animate` is kept as the call-site API, but it now feeds the shared reveal
+ * primitives (`@/components/ui/Reveal`) instead of a second, parallel
+ * `animate-on-scroll` system: the section is revealed by the same
+ * IntersectionObserver that drives the cards and headings inside it, so the
+ * whole page shares one timing curve and one reduced-motion path.
+ *
+ * The section itself only rises ~36px â€” a shot settling into frame â€” while the
+ * copy inside carries the real staging. Because `Reveal` renders its own
+ * markup, this module stays a server component.
  */
 export function Section({
   children,
@@ -46,28 +56,9 @@ export function Section({
   animateDelay = 0,
 }: SectionProps) {
   const isImage = background === "image";
-  const { ref, isVisible } = useScrollAnimation();
 
-  const getAnimationClass = () => {
-    if (animate === "none") return "";
-    const baseClass = "animate-on-scroll";
-    const animationClass = animate === "fade-up" ? "" : `animate-${animate}`;
-    const delayClass = animateDelay > 0 ? `animate-delay-${animateDelay}` : "";
-    return cn(baseClass, animationClass, delayClass, isVisible && "is-visible");
-  };
-
-  return (
-    <section
-      ref={ref}
-      id={id}
-      className={cn(
-        "relative isolate overflow-hidden",
-        backgroundClasses[background],
-        spacingClasses[spacing],
-        getAnimationClass(),
-        className,
-      )}
-    >
+  const backdrop = (
+    <>
       {isImage && backgroundImage ? (
         <>
           <div
@@ -83,7 +74,7 @@ export function Section({
       ) : null}
       {!isImage && spacing !== "small" ? (
         <>
-          {/* Gradient atmosphere only — previously an eagerly-fetched photo
+          {/* Gradient atmosphere only â€” previously an eagerly-fetched photo
               sat behind every section, including below the fold. */}
           <div
             aria-hidden="true"
@@ -92,9 +83,42 @@ export function Section({
           <div aria-hidden="true" className="sky-section-atmosphere" />
         </>
       ) : null}
+    </>
+  );
+
+  const content = (
+    <>
+      {backdrop}
       <div className="relative">
         <Container>{children}</Container>
       </div>
-    </section>
+    </>
+  );
+
+  const sectionClassName = cn(
+    "relative isolate overflow-hidden",
+    backgroundClasses[background],
+    spacingClasses[spacing],
+    className,
+  );
+
+  if (animate === "none") {
+    return (
+      <section id={id} className={sectionClassName}>
+        {content}
+      </section>
+    );
+  }
+
+  return (
+    <Reveal
+      as="section"
+      id={id}
+      variant={revealVariantFromAnimation[animate]}
+      delay={animateDelay}
+      className={sectionClassName}
+    >
+      {content}
+    </Reveal>
   );
 }

@@ -5,6 +5,7 @@ import { resources } from "@/config/resources";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/layout/PageTransition";
+import { RevealProvider } from "@/components/ui/Reveal";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import "@/styles/globals.css";
@@ -69,6 +70,10 @@ export default function RootLayout({
       className={`${fontDisplay.variable} ${fontBody.variable} ${fontAccent.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
+        {/* Arms scroll-reveal motion after hydration. Renders nothing: without
+            it the `.reveal` elements simply stay visible, which is the state
+            we want for no-JS and reduced-motion visitors. */}
+        <RevealProvider />
         <AuthProvider>
           <CartProvider>
             <Header />

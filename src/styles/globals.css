@@ -222,6 +222,113 @@ a {
   animation: enter-page 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* ─────────────────────────────────────────────
+   Route-change veil (PageTransition)
+
+   A fixed full-screen sheet that fades IN while the route swaps underneath
+   and fades OUT over the new page's entrance. Pointer-events are off so it
+   can never block interaction, and it is only ever mounted after an in-session
+   click — a cold load never sees it (LCP safety, see PageTransition.tsx).
+   ───────────────────────────────────────────── */
+
+.route-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 120% 90% at 50% 110%, rgba(212, 175, 55, 0.07), transparent 55%),
+    linear-gradient(180deg, #020a14 0%, #04101f 55%, #020a14 100%);
+}
+
+.route-veil-in {
+  animation: route-veil-in 0.18s ease-out both;
+}
+
+.route-veil-out {
+  animation: route-veil-out 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes route-veil-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes route-veil-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* ─────────────────────────────────────────────
+   Mega menu (Navbar)
+
+   The panel is always mounted and toggled by `data-open`, so open and close
+   are pure CSS transitions on transform/opacity/visibility — no mount churn,
+   no flicker. Visibility flips on a DELAY when closing (so the fade-out is
+   visible) and immediately when opening. Link rows stagger in through `--i`.
+   ───────────────────────────────────────────── */
+
+/* The panel layer is anchored to the HEADER, not to whichever trigger opened
+   it: `.mega-panel` is a full-width strip hanging under the bar, and the
+   surface inside it is centred on the page. The previous version centred an
+   800px surface on its own trigger, which pushed the panel 162px off the left
+   edge of a 1024px viewport and clipped its first column - the layout that read
+   as a broken menu between 1024px and 1280px. One shared anchor also makes it
+   impossible for two panels to appear side by side.
+
+   The strip itself never animates (`visibility` only, so a closed panel can
+   never intercept a click); the surface carries the open/close motion and the
+   link rows still stagger in through `--i`. */
+.mega-panel {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.mega-panel[data-open="true"] {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.mega-surface {
+  opacity: 0;
+  transform: translate3d(0, -10px, 0);
+  transition:
+    opacity 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mega-panel[data-open="true"] .mega-surface {
+  opacity: 1;
+  transform: none;
+}
+
+/* Staggered link rows + column labels + footnote. */
+.mega-panel .mega-item,
+.mega-panel .mega-label,
+.mega-panel .mega-footnote {
+  opacity: 0;
+  transform: translate3d(0, 10px, 0);
+  transition:
+    opacity 0.34s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.34s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mega-panel[data-open="true"] .mega-item,
+.mega-panel[data-open="true"] .mega-label,
+.mega-panel[data-open="true"] .mega-footnote {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(60ms + var(--i, 0) * 35ms);
+}
+
+.mega-panel[data-open="true"] .mega-label {
+  transition-delay: 40ms;
+}
+
+.mega-panel[data-open="true"] .mega-footnote {
+  transition-delay: 140ms;
+}
+
 
 h1,
 h2,
@@ -298,64 +405,288 @@ h6 {
 }
 
 /* ─────────────────────────────────────────────
-   Scroll Animations
+   Cinematic reveal system (Phase B)
+   Server-safe scroll reveals: markup paints visible; JS arms motion.
+   `.reveal` starts hidden ONLY after `js-reveal-armed` is set on <html>.
    ───────────────────────────────────────────── */
 
-.animate-on-scroll {
+/* The hidden state is expressed with `transform`, and the transition list also
+   covers `translate` plus the common hover properties. That split is
+   deliberate: Tailwind v4 compiles `-translate-y-*` to the standalone
+   `translate` property, so a card that is *also* a `.reveal` element can keep
+   its hover lift (and its border/shadow/colour shifts) without the two states
+   overwriting each other. Only `transform`-based hover utilities (scale,
+   rotate) on a reveal element would lose, which is why image zooms live in
+   CSS on the frame instead. */
+.js-reveal-armed .reveal {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translate3d(0, 36px, 0) scale(0.99);
+  transition:
+    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    translate 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.5s ease,
+    background-color 0.5s ease,
+    box-shadow 0.5s ease,
+    color 0.4s ease;
 }
 
-.animate-on-scroll.is-visible {
+.js-reveal-armed .reveal-fade {
+  transform: none;
+}
+
+.js-reveal-armed .reveal-scale {
+  transform: scale(0.94);
+}
+
+.js-reveal-armed .reveal-left {
+  transform: translate3d(-44px, 0, 0);
+}
+
+.js-reveal-armed .reveal-right {
+  transform: translate3d(44px, 0, 0);
+}
+
+.js-reveal-armed .reveal.is-visible {
   opacity: 1;
+  transform: none;
+}
+
+/* Masked line-mask text reveal for headings */
+.js-reveal-armed .reveal-mask {
+  display: block;
+  overflow: hidden;
+}
+
+.js-reveal-armed .reveal-mask > span {
+  display: block;
+  transform: translateY(110%);
+  transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.js-reveal-armed .reveal.is-visible .reveal-mask > span,
+.js-reveal-armed .reveal-mask.is-visible > span {
   transform: translateY(0);
 }
 
-.animate-on-scroll.animate-delay-100 {
-  transition-delay: 100ms;
+/* The clip container itself never fades or shifts — only its inner span moves,
+   so a headline rises into a fixed frame. The padding keeps descenders (g, y)
+   from being clipped once the span has landed. */
+.js-reveal-armed .reveal-mask {
+  opacity: 1;
+  transform: none;
+  padding-bottom: 0.1em;
 }
 
-.animate-on-scroll.animate-delay-200 {
-  transition-delay: 200ms;
+/* Gold rules under headings draw themselves in just after their block lands.
+   The line is a block-level 1px span, so a scaleX transition is all it takes
+   (no layout work, no extra DOM).
+
+   The hidden state is scoped to a reveal ancestor on purpose: a GoldLine that
+   is not inside any reveal keeps its natural, visible state, so the rule can
+   never strand a line at scaleX(0). */
+.js-reveal-armed .reveal .gold-line {
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.18s;
 }
 
-.animate-on-scroll.animate-delay-300 {
-  transition-delay: 300ms;
+.js-reveal-armed .reveal .gold-line-center {
+  transform-origin: center;
 }
 
-.animate-on-scroll.animate-delay-400 {
-  transition-delay: 400ms;
+.js-reveal-armed .reveal.is-visible .gold-line {
+  transform: scaleX(1);
 }
 
-.animate-on-scroll.animate-fade-in {
-  transform: translateY(0);
+/* ─────────────────────────────────────────────
+   Image treatment: slow settle zoom + clip (Phase B/C)
+   ───────────────────────────────────────────── */
+
+/* The frame clips; the media inside settles. */
+.reveal .img-cinematic,
+.reveal.img-cinematic {
+  overflow: hidden;
 }
 
-.animate-on-scroll.animate-scale-in {
-  transform: scale(0.95);
+/* The push-in only exists where a reveal actually governs the frame. A frame
+   that is not inside a reveal keeps its natural scale, so the treatment can
+   never strand an image at 1.06 - the failure mode of an unconditional rule. */
+.js-reveal-armed .reveal .img-cinematic img,
+.js-reveal-armed .reveal .img-cinematic video,
+.js-reveal-armed .reveal.img-cinematic img,
+.js-reveal-armed .reveal.img-cinematic video {
+  transform: scale(1.06);
+  transition: transform 1.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.animate-on-scroll.animate-scale-in.is-visible {
+/* Settle: the frame relaxes to its natural scale as the block reveals. */
+.js-reveal-armed .reveal.is-visible .img-cinematic img,
+.js-reveal-armed .reveal.is-visible .img-cinematic video,
+.js-reveal-armed .reveal.img-cinematic.is-visible img,
+.js-reveal-armed .reveal.img-cinematic.is-visible video {
   transform: scale(1);
 }
 
-.animate-on-scroll.animate-slide-left {
-  transform: translateX(-30px);
+/* Push-back on hover. Specificity has to match the settle rule above, or the
+   hover transform loses to it. */
+.js-reveal-armed .reveal.is-visible .img-cinematic:hover img,
+.js-reveal-armed .reveal.is-visible .img-cinematic:hover video,
+.js-reveal-armed .reveal.img-cinematic.is-visible:hover img,
+.js-reveal-armed .reveal.img-cinematic.is-visible:hover video {
+  transform: scale(1.05);
+  transition-duration: 0.9s;
 }
 
-.animate-on-scroll.animate-slide-left.is-visible {
-  transform: translateX(0);
+/* Card accent line sweep */
+.cine-line {
+  position: relative;
 }
 
-.animate-on-scroll.animate-slide-right {
-  transform: translateX(30px);
+.cine-line::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 1px;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: linear-gradient(90deg, var(--color-gold), transparent);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.animate-on-scroll.animate-slide-right.is-visible {
-  transform: translateX(0);
+.group\/cine:hover .cine-line::after,
+.cine-line:hover::after {
+  transform: scaleX(1);
 }
+
+/* Film grain + vignette utilities */
+.film-grain {
+  position: relative;
+}
+
+.film-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+}
+
+.film-vignette::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: radial-gradient(ellipse 90% 75% at 50% 45%, transparent 55%, rgba(2, 10, 20, 0.55) 100%);
+}
+
+/* Scroll cue */
+@keyframes scroll-cue {
+  0% { transform: scaleY(0); transform-origin: top; }
+  45% { transform: scaleY(1); transform-origin: top; }
+  55% { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+.scroll-cue-line {
+  animation: scroll-cue 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+/* Slow ken-burns drift for hero poster layer */
+@keyframes hero-drift {
+  from { transform: scale(1.08); }
+  to { transform: scale(1.14) translate3d(1%, -1%, 0); }
+}
+
+.hero-drift {
+  animation: hero-drift 24s ease-in-out infinite alternate;
+}
+
+/* ─────────────────────────────────────────────
+   Documentary reel — chapter hand-off + grain
+
+   `.reel-clip-in` dissolves each newly mounted clip in over the poster, so a
+   cut between chapters reads as a film dissolve instead of a hard swap. The
+   playback engine is untouched: exactly one live <video> at a time.
+
+   The grain is a 160 px tiled SVG at very low opacity. It is a static
+   background image, not a canvas or an animated element, so it costs one
+   decoded texture and nothing per frame.
+   ───────────────────────────────────────────── */
+
+@keyframes reel-clip-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.reel-clip-in {
+  animation: reel-clip-in 1.2s ease-out both;
+}
+
+.reel-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23grain)' opacity='0.6'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  mix-blend-mode: overlay;
+}
+
+/* ─────────────────────────────────────────────
+   Hero film frame
+
+   Hairlines draw themselves in from the edges at first paint (CSS only, so
+   they animate without JavaScript and land on their final state under
+   `prefers-reduced-motion`, which collapses every duration to 0.01ms).
+   ───────────────────────────────────────────── */
+
+@keyframes cine-hair-in {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+.cine-hair-in {
+  animation: cine-hair-in 1.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.cine-hair-in-late {
+  animation: cine-hair-in 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+@keyframes cine-bracket-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.cine-bracket-in {
+  animation: cine-bracket-in 1.8s ease-out 0.45s both;
+}
+
+/* Interior route hero: the photograph is already in frame at first paint and
+   relaxes into place from 1.06. A keyframe is used rather than a class toggle
+   because the element has to be mid-animation without waiting for hydration -
+   the same reason the entrance motion above is CSS. */
+@keyframes hero-image-settle {
+  from { transform: scale(1.06); }
+  to { transform: scale(1); }
+}
+
+.hero-image-settle {
+  animation: hero-image-settle 1.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* The legacy nimate-on-scroll system (hook + utilities) was retired in
+   favour of the reveal primitives above: one observer, one timing curve, one
+   reduced-motion path. Section maps its nimate prop onto those variants. */
 
 /* A restrained shimmer for primary actions and image-led cards. */
 .group:hover .group-sheen::after,

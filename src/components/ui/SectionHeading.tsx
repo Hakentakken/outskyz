@@ -1,5 +1,6 @@
 import { cn } from "@/utils/cn";
 import { GoldLine } from "./GoldLine";
+import { Reveal } from "@/components/ui/Reveal";
 
 interface SectionHeadingProps {
   eyebrow?: string;
@@ -12,6 +13,10 @@ interface SectionHeadingProps {
 /**
  * Editorial section heading with gold eyebrow, Playfair display title,
  * and optional description.
+ *
+ * The three parts land in sequence — eyebrow, then the title rising through a
+ * mask, then the copy and a gold rule that draws itself in — using the shared
+ * reveal primitives instead of a parallel animation system.
  */
 export function SectionHeading({
   eyebrow,
@@ -31,24 +36,35 @@ export function SectionHeading({
       )}
     >
       {eyebrow ? (
-        <p className="mb-4 text-xs font-bold uppercase tracking-[0.35em] text-gold font-accent">
+        <Reveal
+          variant="fade"
+          className="mb-4 text-xs font-bold uppercase tracking-[0.35em] text-gold font-accent"
+        >
           {eyebrow}
-        </p>
+        </Reveal>
       ) : null}
-      <h2 className="text-4xl font-bold text-ivory sm:text-5xl lg:text-6xl font-display tracking-tight">
+      <Reveal
+        as="h2"
+        variant="mask"
+        className="text-4xl font-bold text-ivory sm:text-5xl lg:text-6xl font-display tracking-tight"
+      >
         {title}
-      </h2>
+      </Reveal>
       {description ? (
-        <p
+        <Reveal
+          variant="fade"
+          delay={140}
           className={cn(
             "mt-6 text-lg leading-relaxed text-muted sm:text-xl max-w-2xl",
             centered ? "mx-auto" : "",
           )}
         >
           {description}
-        </p>
+        </Reveal>
       ) : null}
-      <GoldLine className={cn("mt-8", centered ? "mx-auto" : "")} />
+      <Reveal variant="fade" delay={220} className="mt-8">
+        <GoldLine className={cn(centered ? "mx-auto gold-line-center" : "")} />
+      </Reveal>
     </div>
   );
 }

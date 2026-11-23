@@ -16,7 +16,7 @@ const columnHeadingClass =
   "text-xs font-semibold uppercase tracking-[0.3em] text-gold";
 
 const linkClass =
-  "text-sm text-ivory/70 transition-colors duration-300 hover:text-gold";
+  "inline-block py-1 text-sm text-ivory/70 transition-colors duration-300 hover:text-gold";
 
 const socialClass =
   "flex h-11 w-11 items-center justify-center rounded-sm border border-gold/40 text-gold transition-all duration-300 hover:bg-gold hover:text-black hover:shadow-[0_0_24px_rgba(212,175,55,0.3)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold";
@@ -87,7 +87,7 @@ export function Footer() {
               <li className="pt-2">
                 <Link
                   href="/adventures"
-                  className="text-sm font-semibold text-gold transition-colors duration-300 hover:text-gold-bright"
+                  className="inline-block py-2 text-sm font-semibold text-gold transition-colors duration-300 hover:text-gold-bright"
                 >
                   View All →
                 </Link>
@@ -133,7 +133,7 @@ export function Footer() {
               <li>
                 <a
                   href={`mailto:${siteConfig.contact.email}`}
-                  className="transition-colors duration-300 hover:text-gold"
+                  className="inline-block py-1 text-sm transition-colors duration-300 hover:text-gold"
                 >
                   {siteConfig.contact.email}
                 </a>
@@ -178,7 +178,7 @@ export function Footer() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="transition-colors duration-300 hover:text-gold"
+                    className="inline-block py-1.5 transition-colors duration-300 hover:text-gold"
                   >
                     {item.label}
                   </Link>

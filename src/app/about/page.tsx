@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { PageHero } from "@/components/sections/PageHero";
 import { Section } from "@/components/sections/Section";
+import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { GoldLine } from "@/components/ui/GoldLine";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
@@ -51,7 +52,7 @@ export default function AboutPage() {
       {/* Story split */}
       <Section background="default" spacing="large">
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
-          <div>
+          <Reveal variant="left">
             <p className={eyebrowClass}>{about.brandStory.eyebrow}</p>
             <h2 className="mt-4 font-display text-3xl text-ivory sm:text-4xl lg:text-5xl">
               {about.brandStory.title}
@@ -65,16 +66,16 @@ export default function AboutPage() {
             <p className="mt-9 border-l-2 border-gold/40 pl-5 font-display text-xl text-ivory/90 sm:text-2xl">
               {siteConfig.tagline}
             </p>
-          </div>
+          </Reveal>
 
-          <div className="relative">
+          <Reveal variant="right" delay={120} className="relative">
             {/* Offset frame first so the photograph paints over it; a negative
                 z-index would drop it behind the section's own atmosphere. */}
             <div
               aria-hidden="true"
               className="absolute inset-0 translate-x-4 translate-y-4 rounded-md border border-gold/25"
             />
-            <div className="relative aspect-4/5 overflow-hidden rounded-md border border-gold/20 bg-coal">
+            <div className="img-cinematic relative aspect-4/5 overflow-hidden rounded-md border border-gold/20 bg-coal">
               <Image
                 src={images.skydiving}
                 alt="An Outskyz adventurer in freefall"
@@ -93,7 +94,7 @@ export default function AboutPage() {
                 </p>
               </div>
             </div>
-          </div>
+          </Reveal>
         </div>
       </Section>
 
@@ -107,9 +108,10 @@ export default function AboutPage() {
         />
         <div className="mt-16 grid gap-8 md:grid-cols-2">
           {[about.mission, about.vision].map((panel, index) => (
-            <div
+            <Reveal
               key={panel.eyebrow}
-              className="group relative overflow-hidden rounded-md border border-gold/20 bg-void/40 p-8 transition-all duration-500 hover:border-gold/45 hover:bg-void/60 sm:p-10"
+              delay={index * 90}
+              className="group relative h-full overflow-hidden rounded-md border border-gold/20 bg-void/40 p-8 transition-all duration-500 hover:border-gold/45 hover:bg-void/60 sm:p-10"
             >
               <span
                 aria-hidden="true"
@@ -125,7 +127,7 @@ export default function AboutPage() {
               <p className="mt-5 max-w-prose text-base leading-relaxed text-muted">
                 {panel.description}
               </p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </Section>
@@ -139,10 +141,12 @@ export default function AboutPage() {
           description="Five principles, applied to every departure."
         />
         <ol className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {about.coreValues.map((value) => (
-            <li
+          {about.coreValues.map((value, index) => (
+            <Reveal
+              as="li"
               key={value.number}
-              className="group relative overflow-hidden rounded-md border border-gold/20 bg-coal/50 p-8 transition-all duration-500 hover:-translate-y-1 hover:border-gold/45 hover:shadow-[0_18px_50px_rgba(0,0,0,0.45)]"
+              delay={index * 70}
+              className="group relative h-full overflow-hidden rounded-md border border-gold/20 bg-coal/50 p-8 transition-all duration-500 hover:-translate-y-1 hover:border-gold/45 hover:shadow-[0_18px_50px_rgba(0,0,0,0.45)]"
             >
               <span
                 aria-hidden="true"
@@ -157,7 +161,7 @@ export default function AboutPage() {
               <p className="mt-3 text-sm leading-relaxed text-muted">
                 {value.description}
               </p>
-            </li>
+            </Reveal>
           ))}
         </ol>
       </Section>
@@ -174,11 +178,13 @@ export default function AboutPage() {
         />
         <div className="mt-16 grid gap-8 md:grid-cols-2">
           {founders.map((founder, index) => (
-            <article
+            <Reveal
+              as="article"
               key={founder.id}
-              className="group overflow-hidden rounded-md border border-gold/20 bg-void/40 transition-all duration-500 hover:border-gold/45"
+              delay={index * 90}
+              className="group overflow-hidden rounded-md border border-gold/20 bg-void/40 hover:border-gold/45"
             >
-              <div className="relative aspect-4/5 overflow-hidden bg-gradient-to-br from-coal to-void">
+              <div className="img-cinematic relative aspect-4/5 overflow-hidden bg-gradient-to-br from-coal to-void">
                 <Portrait
                   src={founder.image}
                   name={founder.name}
@@ -210,7 +216,7 @@ export default function AboutPage() {
                   </p>
                 ) : null}
               </div>
-            </article>
+            </Reveal>
           ))}
         </div>
       </Section>
@@ -224,11 +230,13 @@ export default function AboutPage() {
         />
         <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {teamMembers.map((member, index) => (
-            <article
+            <Reveal
+              as="article"
               key={member.id}
-              className="group flex flex-col overflow-hidden rounded-md border border-gold/20 bg-coal/50 p-6 transition-all duration-500 hover:-translate-y-1 hover:border-gold/45"
+              delay={index * 80}
+              className="group flex flex-col overflow-hidden rounded-md border border-gold/20 bg-coal/50 p-6 hover:-translate-y-1 hover:border-gold/45"
             >
-              <div className="relative aspect-3/4 overflow-hidden rounded-md bg-gradient-to-br from-coal to-void">
+              <div className="img-cinematic relative aspect-3/4 overflow-hidden rounded-md bg-gradient-to-br from-coal to-void">
                 <Portrait
                   src={member.image}
                   name={member.name}
@@ -257,35 +265,55 @@ export default function AboutPage() {
                   Name placeholder — awaiting the real name.
                 </p>
               ) : null}
-            </article>
+            </Reveal>
           ))}
         </div>
       </Section>
 
-      {/* Closing CTA — replaces the old duplicated "founders preview" block */}
+      {/* Closing CTA — keeps Phase 4's de-duplication of the founders block,
+          but restores the founders preview photograph the rewrite dropped:
+          existing media must stay on the page. */}
       <Section background="dark" spacing="large">
-        <div className="relative overflow-hidden rounded-lg border border-gold/25 bg-void/50 px-8 py-16 text-center sm:px-16">
+        <Reveal className="relative overflow-hidden rounded-lg border border-gold/25 bg-void/50">
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(212,175,55,0.16),transparent_60%)]"
           />
-          <div className="relative mx-auto max-w-2xl">
-            <p className={eyebrowClass}>Start Your Journey</p>
-            <h2 className="mt-4 font-display text-3xl text-ivory sm:text-4xl lg:text-5xl">
-              Your turn to take off.
-            </h2>
-            <GoldLine className="mx-auto mt-6" />
-            <p className="mt-6 text-base leading-relaxed text-muted sm:text-lg">
-              {about.foundersPreview.description}
-            </p>
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-              <Button href={siteConfig.cta.href}>{siteConfig.cta.label}</Button>
-              <Button href={about.foundersPreview.cta.href} variant="secondary">
-                {about.foundersPreview.cta.label}
-              </Button>
+          <div className="relative grid items-center gap-12 px-8 py-16 sm:px-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+            <div className="text-center lg:text-left">
+              <p className={eyebrowClass}>Start Your Journey</p>
+              <h2 className="mt-4 font-display text-3xl text-ivory sm:text-4xl lg:text-5xl">
+                Your turn to take off.
+              </h2>
+              <GoldLine className="mt-6 lg:mx-0" />
+              <p className="mt-6 text-base leading-relaxed text-muted sm:text-lg">
+                {about.foundersPreview.description}
+              </p>
+              <div className="mt-10 flex flex-wrap items-center justify-center gap-4 lg:justify-start">
+                <Button href={siteConfig.cta.href}>{siteConfig.cta.label}</Button>
+                <Button href={about.foundersPreview.cta.href} variant="secondary">
+                  {about.foundersPreview.cta.label}
+                </Button>
+              </div>
+            </div>
+
+            {/* The original "founders preview" photograph, kept from the
+                pre-Phase-4 About page. Same asset the Home page still shows. */}
+            <div className="img-cinematic relative aspect-[4/3] overflow-hidden rounded-md border border-gold/20 bg-coal">
+              <Image
+                src={about.foundersPreview.image}
+                alt="Outskyz founders"
+                fill
+                sizes="(max-width: 1024px) 100vw, 45vw"
+                className="object-cover"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-void/60 via-transparent to-transparent"
+              />
             </div>
           </div>
-        </div>
+        </Reveal>
       </Section>
     </>
   );
